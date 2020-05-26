@@ -6,7 +6,7 @@
 }
 
 #links {
-    border-style: dashed;
+    /* border-style: dashed; */
 }
 
 #text {
@@ -22,8 +22,8 @@
   margin-top: 0;
   margin-bottom: 0;
 
-  border-style: dotted;
-  border-color: red;
+  /* border-style: dotted;
+  border-color: red; */
 }
 
 #greeting-container {
