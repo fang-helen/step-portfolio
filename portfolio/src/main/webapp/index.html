@@ -6,12 +6,18 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body class = "body">
     <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
+      <h1 style = "border-style: dashed;">Helen Fang</h1>
+      <div id = "links">
+          <a href = "https://www.linkedin.com/in/helen-fang/">LinkedIn</a>
+          <a href = "https://github.com/fang-helen">GitHub</a>
+      </div>
+      <div id = "text">
+        <p>Hello! I am a computer science student at the University of Texas at Austin and aspiring software engineer.</p>
+      </div>
+      <p>Click here to get a random fact about me:</p>
+      <button onclick="addRandomGreeting()">Facts</button>
       <div id="greeting-container"></div>
     </div>
   </body>
