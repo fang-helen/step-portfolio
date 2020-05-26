@@ -1,7 +1,29 @@
+.body {
+    font-family: sans-serif;
+    background: #8f8f8f;
+    color: white;
+    line-height: 1.6;
+}
+
+#links {
+    border-style: dashed;
+}
+
+#text {
+    width: 80%;
+    margin: auto;
+}
+
 #content {
   margin-left: auto;
   margin-right: auto;
   width: 650px;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  border-style: dotted;
+  border-color: red;
 }
 
 #greeting-container {
