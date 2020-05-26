@@ -15,6 +15,12 @@
   margin: auto;
 }
 
+.text-left{
+  width: 80%;
+  margin: auto;
+  text-align: left;
+}
+
 .list-title{
   font-weight: bold;
 }
