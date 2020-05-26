@@ -19,9 +19,9 @@ function addRandomGreeting() {
   const greetings = [
       'I speak fluent Mandarin and some Spanish.',
       'I really like Chinese dramas.',
-      'I think I\'m a pretty easy going person.',
       'I\'ve made a lot of pencil bags, but don\'t use most of them.',
-      'I have a younger brother at home, we\'re 9 years apart.'
+      'I have a younger brother at home, we\'re 9 years apart.',
+      'I am passionate about stinky tofu.',
     ];
 
   // Pick a random greeting.
