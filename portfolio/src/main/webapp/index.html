@@ -35,14 +35,14 @@
       <p>Click here to get a random fact about me:</p>
       <button onclick = "addRandomGreeting()">Facts</button>
       <div id = "greeting-container"></div>
-      <div class = "dropdown">
+      <div class = "dropdown" onclick = "rotateItem(0)">
         <span class = "plus">+</span>
         <span class = "dropdown-title">About</span>
         <div class = "dropdown-text">
             <!-- <p>asdf</p> -->
         </div>
       </div>
-      <div class = "dropdown">
+      <div class = "dropdown" onclick = "rotateItem(1)">
         <span class = "plus">+</span>
         <span class = "dropdown-title">Pictures</span>
         <div class = "dropdown-text">
@@ -50,11 +50,14 @@
         </div>
       </div>
       <div class = "dropdown">
-        <span class = "plus">+</span>
+        <span class = "plus" onclick = "rotateItem(2)">+</span>
         <span class = "dropdown-title">Projects</span>
         <div class = "dropdown-text">
 
         </div>
+      </div>
+      <div id = "test">
+          
       </div>
     </div>
   </body>

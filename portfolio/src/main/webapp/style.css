@@ -51,7 +51,7 @@
   font-size: 50px;
 }
 .plus.clicked {
-  transform: rotate(45deg);
+  transform: rotate(135deg);
 }
 
 .dropdown-title {

@@ -31,3 +31,13 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+function rotateItem(index) {
+    var item = document.getElementsByClassName("plus")[index];
+    if(!item.classList.contains("clicked")) {
+        item.classList.add("clicked");
+    } else {
+        item.classList.remove("clicked");
+    }
+
+}
