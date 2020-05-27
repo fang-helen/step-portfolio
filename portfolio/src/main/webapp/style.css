@@ -40,8 +40,7 @@
   font-size: 40px;
   line-height: 1;
   margin: 0;
-  transition: font-size .1s ease;
-  transform: rotate(135deg);
+  transition: font-size .1s, transform .5s;
   vertical-align: middle;
   width: 80px;
 
@@ -49,7 +48,10 @@
 }
 
 .plus:hover {
-    font-size: 50px;
+  font-size: 50px;
+}
+.plus.clicked {
+  transform: rotate(45deg);
 }
 
 .dropdown-title {
