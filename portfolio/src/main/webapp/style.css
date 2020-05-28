@@ -1,28 +1,42 @@
-.body {
+/* General */
+#body {
   background: #8f8f8f;
   color: white;
+  display: flex;
+  flex-direction: row;
   font: 100%/1.6 "Trebuchet MS", Helvetica, sans-serif;
   margin: auto;
-  padding: 5% 10% 5% 10%;
+  padding: 5%;
 }
 
-.content {
+.content-left {
+  flex: 1 1 50%;
+  text-align: center;
+  max-width: 800px;
+  padding: 10px;
+}
+
+.content-right {
+  align-items: center;
+  border-left-style: solid;
+  flex: 1 1 50%;
+  margin: auto auto auto 10px;
+  padding: 35px;
   text-align: center;
   max-width: 800px;
 }
 
-.text-left {
-  text-align: left;
+#intro {
+    padding: 10px;
 }
 
-.list-title {
-  font-weight: bold;
-}
+
+/* Dropdowns */
 
 .dropdown-item {
   border: 1px solid;
   border-radius: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   padding: 5px 0 5px 0;
 }
 
@@ -71,8 +85,10 @@
 }
 
 #greeting-container {
-  margin-top: 20px;
+  margin: 10px auto 20px 65px;
 }
+
+/* Pictures */
 
 #img-container {
   display: flex;
@@ -80,17 +96,29 @@
   flex-flow: row wrap;
 }
 
-a {
+.gallery-link {
   flex: 1 1 auto;
   margin: 5px;
   width: 40%;
 }
 
-img {
+.gallery {
   width: 100%;
   object-fit: contain;
 }
 
+#pfp {
+  border-radius: 15%;
+  max-width: 50%;
+  object-fit: contain;
+}
+
+/* Projects */
+
 ul {
   text-align: left;
+}
+
+.list-title {
+  font-weight: bold;
 }
