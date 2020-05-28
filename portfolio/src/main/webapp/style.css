@@ -74,12 +74,23 @@
   margin-top: 20px;
 }
 
+#img-container {
+  display: flex;
+  align-items: flex-start;
+  flex-flow: row wrap;
+}
+
+a {
+  flex: 1 1 auto;
+  margin: 5px;
+  width: 40%;
+}
+
 img {
-  height: 300px;
+  width: 100%;
   object-fit: contain;
-  width: 300px;
 }
 
 ul {
-    text-align: left;
+  text-align: left;
 }
