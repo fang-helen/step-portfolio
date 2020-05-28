@@ -46,8 +46,7 @@ function rotateItem(index) {
         text.style.height = (textContent.clientHeight + 30) + "px";
     } else {
         icon.classList.remove("clicked");
-        text.style.height = "1px";
-
+        text.style.height = "0";
     }
 
 }
