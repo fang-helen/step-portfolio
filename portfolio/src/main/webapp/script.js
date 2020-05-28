@@ -31,3 +31,22 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+/**
+ * Applies a rotation effect to the clicked icon and toggles the drop-down.
+ * If the icon is a "+", it is rotated into an "x" and the drop-down contents are displayed.
+ * If the icon is an "x", it is rotated back into a "+" and the drop-down is collapsed.
+ */
+function rotateItem(index) {
+    var icon = document.getElementsByClassName("plus")[index];
+    var text = document.getElementsByClassName("dropdown-text")[index];
+    var textContent = document.getElementsByClassName("dropdown-text-content")[index];
+    if(!icon.classList.contains("clicked")) {
+        icon.classList.add("clicked");
+        text.style.height = (textContent.clientHeight + 30) + "px";
+    } else {
+        icon.classList.remove("clicked");
+        text.style.height = "0";
+    }
+
+}
