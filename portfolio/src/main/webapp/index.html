@@ -6,17 +6,20 @@
     <link rel = "stylesheet" href = "style.css">
     <script src = "script.js"></script>
   </head>
-  <body class = "body">
-    <div class ="content">
-      <h1>Helen Fang</h1>
+  <body id = "body" onload = "loadLayout()">
+    <div class ="content-left">
+      <h1>Hello!</h1>
+      <img src = "images/pfp.jpg" id = "pfp" alt = "a picture of me!"/>
       <div id = "links">
           <a href = "https://www.linkedin.com/in/helen-fang/">LinkedIn</a>
           <a href = "https://github.com/fang-helen">GitHub</a>
       </div>
-      <div class = "text">
-        <p>Hello! My name is Helen. I am a computer science student at 
+      <div id = "intro">
+        <p>Hi! My name is Helen Fang. I am a computer science student at 
             the University of Texas at Austin and aspiring software engineer.</p>
       </div>
+    </div>
+    <div class = "content-right">
       <div class = "dropdown-item">
         <div class = "dropdown" onclick = "rotateItem(0)">
             <span class = "plus">+</span>
@@ -49,12 +52,24 @@
           <div class = "dropdown-text-content">
             <p class = "text">I like to draw in my free time!</p>
             <div id = "img-container">
-              <a href = "images/betta.jpg"><img src = "images/betta.jpg"/></a>
-              <a href = "images/mafu.JPG"><img src = "images/mafu.JPG"/></a>
-              <a href = "images/kyogre.jpg"><img src = "images/kyogre.jpg"/></a>
-              <a href = "images/headphones.jpg"><img src = "images/headphones.jpg"/></a>
-              <a href = "images/seal.jpg"><img src = "images/seal.jpg"/></a>
-              <a href = "images/xmas.jpg"><img src = "images/xmas.jpg"/></a>
+              <a href = "/images/betta.jpg" class = "gallery-link">
+                <img src = "/images/betta.jpg" class = "gallery" alt = "acrylic painting of betta fish"/>
+              </a>
+              <a href = "/images/mafu.JPG" class = "gallery-link">
+                <img src = "/images/mafu.JPG" class = "gallery" alt = "colored pencil drawing of man with pink hair"/>
+              </a>
+              <a href = "/images/kyogre.jpg" class = "gallery-link">
+                <img src = "/images/kyogre.jpg" class = "gallery" alt = "colored pencil drawing of the Pokemon Kyogre"/>
+              </a>
+              <a href = "/images/headphones.jpg" class = "gallery-link">
+                <img src = "/images/headphones.jpg" class = "gallery" alt = "colored pencil drawing of heaphones and ripples"/>
+              </a>
+              <a href = "/images/seal.jpg" class = "gallery-link">
+                <img src = "/images/seal.jpg" class = "gallery" alt = "oil painting of a leopard seal"/>
+              </a>
+              <a href = "/images/xmas.jpg" class = "gallery-link">
+                <img src = "/images/xmas.jpg" class = "gallery" alt = "colored pencil drawing of a Christmas ornament"/>
+              </a>
             </div>
           </div>
         </div>
@@ -88,9 +103,13 @@
           </div>
         </div>
       </div>
-        <p>Click here to get a random fact about me:</p>
-      <button onclick = "addRandomGreeting()">Facts</button>
-      <div id = "greeting-container"></div>
+      <div class = "dropdown-item" onclick = "addRandomGreeting()">
+        <div class = "dropdown">
+          <span class = "plus">⟳</span>
+          <span class = "dropdown-title">Facts</span>
+        </div>
+        <div id = "greeting-container">Click this box to get a random fact about me!</div>
+      </div>
     </div>
   </body>
 </html>
