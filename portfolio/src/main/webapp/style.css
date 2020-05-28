@@ -116,9 +116,11 @@
 /* Projects */
 
 ul {
+  margin-bottom: 8px;
   text-align: left;
 }
 
 .list-title {
   font-weight: bold;
+  margin: 0;
 }
