@@ -35,29 +35,62 @@
       <p>Click here to get a random fact about me:</p>
       <button onclick = "addRandomGreeting()">Facts</button>
       <div id = "greeting-container"></div>
-      <div class = "dropdown" onclick = "rotateItem(0)">
-        <span class = "plus">+</span>
-        <span class = "dropdown-title">About</span>
+      <div>
+        <div class = "dropdown" onclick = "rotateItem(0)">
+            <span class = "plus">+</span>
+            <span class = "dropdown-title">About</span>
+        </div>
         <div class = "dropdown-text">
-            <!-- <p>asdf</p> -->
+          <div class = "dropdown-text-content">
+            <p>I will be a sophomore at UT Austin this fall. I like to think that I have 
+                a reputation of being a reliable, efficient worker and having an 
+                easygoing personality. I’m interested in computer science because I like 
+                math and logic, and found programming to be really fun after I first 
+                learned Java in high school.</p>
+            <p>I have four years of coding experience, and this is my first technical 
+                internship. Before this, I’ve dabbled in a variety of miscellaneous 
+                activities -- last year, I held an internship with the media department 
+                in the Travis County Tax Office, where I translated several PSAs relating 
+                to vehicle titling, voter registration, and more into Mandarin. I currently 
+                work as a tutor for math and computer science at UT’s Sanger Langer Center, 
+                and taught SAT on the weekends in high school. I’ve also been playing piano 
+                since I was 5, and have organized my own jewelry-making classes.</p>
+          </div>
         </div>
       </div>
       <div class = "dropdown" onclick = "rotateItem(1)">
         <span class = "plus">+</span>
         <span class = "dropdown-title">Pictures</span>
         <div class = "dropdown-text">
-
+            <!-- <p>adsf</p> -->
         </div>
       </div>
-      <div class = "dropdown">
-        <span class = "plus" onclick = "rotateItem(2)">+</span>
+      <div class = "dropdown" onclick = "rotateItem(2)">
+        <span class = "plus">+</span>
         <span class = "dropdown-title">Projects</span>
         <div class = "dropdown-text">
-
+    <div class = "dropdown-text-content">
+            <ul>
+              <p class = "list-title">SnapPack</p>
+              <li>Mobile app that determines what is missing from a packing checklist using a picture of 
+                    the luggage contents.</dd>
+              <li>Built using React Native, with computer vision functionality implemented through Google Cloud Vision.</dd>
+              <li>Built during HackTX 2019, and won best use of Google API.</dd>
+            </ul>
+            <ul>
+              <p class = "list-title">Pomodoro Timer</p>
+              <li>Chrome extension based on the pomodoro technique for time management and productivity.</dd>
+              <li>Simple timer app with customizable settings for duration and loop count.</dd>
+            </ul>
+            <ul>
+              <p class = "list-title">Worksheet Generator</p>
+              <li>JAR application with back end built in JAVA and interface designed using JavaFX.</dd>
+              <li>Randomly generates math problems along with an answer key.</dd>
+              <li>Customizable with respect to worksheet length, order of magnitude for numbers, 
+                    and which operations  (add, subtract, multiply, divide) to use.</dd>
+            </ul>
+    </div>
         </div>
-      </div>
-      <div id = "test">
-          
       </div>
     </div>
   </body>
