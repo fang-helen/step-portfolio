@@ -22,7 +22,6 @@
 .dropdown-item {
   border: 1px solid;
   border-radius: 10px;
-    height: 55px;
   margin-bottom: 15px;
   padding: 5px 0 5px 0;
 }
@@ -30,6 +29,7 @@
 .dropdown {
   align-content: left;
   display: flex;
+  height: 55px;
   margin: 0;
   padding: 0;
 }
@@ -41,7 +41,6 @@
   vertical-align: middle;
   width: 80px;
 
-  /* border-style: dashed; */
 }
 
 .plus:hover {
@@ -53,49 +52,22 @@
 }
 
 .dropdown-title {
-  /* border-left-style: solid; */
   font-size: 30px;
   height: 45px;
   object-fit: contain;
   width: 90%;
-
 }
 
 .dropdown-text {
     display: block;
+    height: 0;
     margin-left: 80px;
-    max-height: 1px;
+    overflow: hidden;
     transition: .5s ease;
-}
-
-/* #about-section.clicked {
-    max-height: 1500px;
-}
-
-#pictures-section.clicked {
-    max-height: 500px;
-}
-
-#projects-section.clicked {
-    max-height: 1500px;
-} */
-
-.dropdown-text.clicked {
-    max-height: 1500px;
 }
 
 .dropdown-text-content {
-    bottom: 100%;
-    height: 0;
     margin: 0 10% 0 10%;
-    overflow: hidden;
-    transition: .5s ease;
-    /* width: 80%; */
-}
-
-.dropdown-text-content.clicked {
-    bottom: 0;
-    height: 100%;
 }
 
 #greeting-container {

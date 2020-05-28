@@ -35,7 +35,7 @@ function addRandomGreeting() {
 /**
  * Applies a rotation effect to the clicked icon and toggles the drop-down.
  * If the icon is a "+", it is rotated into an "x" and the drop-down contents are displayed.
- * If the icon is an "x", it is rotated back into a "+" and the drop-down is collapsed
+ * If the icon is an "x", it is rotated back into a "+" and the drop-down is collapsed.
  */
 function rotateItem(index) {
     var icon = document.getElementsByClassName("plus")[index];
@@ -43,12 +43,10 @@ function rotateItem(index) {
     var textContent = document.getElementsByClassName("dropdown-text-content")[index];
     if(!icon.classList.contains("clicked")) {
         icon.classList.add("clicked");
-        text.classList.add("clicked");
-        textContent.classList.add("clicked");
+        text.style.height = (textContent.clientHeight + 30) + "px";
     } else {
         icon.classList.remove("clicked");
-        text.classList.remove("clicked");
-        textContent.classList.remove("clicked");
+        text.style.height = "1px";
 
     }
 
