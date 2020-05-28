@@ -19,17 +19,24 @@
   font-weight: bold;
 }
 
+.dropdown-item {
+  border: 1px solid;
+  border-radius: 10px;
+    height: 55px;
+  margin-bottom: 15px;
+  padding: 5px 0 5px 0;
+}
+
 .dropdown {
-  display: flex;
   align-content: left;
+  display: flex;
   margin: 0;
   padding: 0;
 }
 
 .plus {
-  font-size: 40px;
+  font-size: 45px;
   line-height: 1;
-  height: 45px;
   transition: font-size .1s, transform .5s;
   vertical-align: middle;
   width: 80px;
@@ -38,7 +45,7 @@
 }
 
 .plus:hover {
-  font-size: 50px;
+  font-size: 55px;
 }
 
 .plus.clicked {
@@ -46,7 +53,7 @@
 }
 
 .dropdown-title {
-  border-left-style: solid;
+  /* border-left-style: solid; */
   font-size: 30px;
   height: 45px;
   object-fit: contain;
@@ -56,20 +63,34 @@
 
 .dropdown-text {
     display: block;
-    height: 10px;
+    margin-left: 80px;
+    max-height: 1px;
     transition: .5s ease;
 }
 
+/* #about-section.clicked {
+    max-height: 1500px;
+}
+
+#pictures-section.clicked {
+    max-height: 500px;
+}
+
+#projects-section.clicked {
+    max-height: 1500px;
+} */
+
 .dropdown-text.clicked {
-    height: 300px;
+    max-height: 1500px;
 }
 
 .dropdown-text-content {
     bottom: 100%;
     height: 0;
+    margin: 0 10% 0 10%;
     overflow: hidden;
     transition: .5s ease;
-    width: 80%;
+    /* width: 80%; */
 }
 
 .dropdown-text-content.clicked {

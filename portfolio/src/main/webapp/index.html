@@ -16,31 +16,15 @@
       <div class = "text">
         <p>Hello! My name is Helen. I am a computer science student at 
             the University of Texas at Austin and aspiring software engineer.</p>
-        <p>I will be a sophomore at UT Austin this fall. I like to think that I have 
-            a reputation of being a reliable, efficient worker and having an 
-            easygoing personality. I’m interested in computer science because I like 
-            math and logic, and found programming to be really fun after I first 
-            learned Java in high school.</p>
-        <p>I have four years of coding experience, and this is my first technical 
-            internship. Before this, I’ve dabbled in a variety of miscellaneous 
-            activities -- last year, I held an internship with the media department 
-            in the Travis County Tax Office, where I translated several PSAs relating 
-            to vehicle titling, voter registration, and more into Mandarin. I currently 
-            work as a tutor for math and computer science at UT’s Sanger Langer Center, 
-            and taught SAT on the weekends in high school. I’ve also been playing piano 
-            since I was 5, and have organized my own jewelry-making classes.</p>
         <p><a href = "projects.html">Here</a> are some of my CS projects.</p>
         <p><a href = "gallery.html">Here</a> are some of my pictures.</p>
       </div>
-      <p>Click here to get a random fact about me:</p>
-      <button onclick = "addRandomGreeting()">Facts</button>
-      <div id = "greeting-container"></div>
-      <div>
+      <div class = "dropdown-item">
         <div class = "dropdown" onclick = "rotateItem(0)">
             <span class = "plus">+</span>
             <span class = "dropdown-title">About</span>
         </div>
-        <div class = "dropdown-text">
+        <div class = "dropdown-text" id = "about-section">
           <div class = "dropdown-text-content">
             <p>I will be a sophomore at UT Austin this fall. I like to think that I have 
                 a reputation of being a reliable, efficient worker and having an 
@@ -58,40 +42,49 @@
           </div>
         </div>
       </div>
-      <div class = "dropdown" onclick = "rotateItem(1)">
-        <span class = "plus">+</span>
-        <span class = "dropdown-title">Pictures</span>
-        <div class = "dropdown-text">
-            <!-- <p>adsf</p> -->
+      <div class = "dropdown-item">
+        <div class = "dropdown" onclick = "rotateItem(1)">
+          <span class = "plus">+</span>
+          <span class = "dropdown-title">Pictures</span>
+        </div>
+        <div class = "dropdown-text" id = "pictures-section">
+          <div class = "dropdown-text-content">
+
+          </div>
         </div>
       </div>
-      <div class = "dropdown" onclick = "rotateItem(2)">
-        <span class = "plus">+</span>
-        <span class = "dropdown-title">Projects</span>
-        <div class = "dropdown-text">
-    <div class = "dropdown-text-content">
+      <div class = "dropdown-item">
+        <div class = "dropdown" onclick = "rotateItem(2)">
+          <span class = "plus">+</span>
+          <span class = "dropdown-title">Projects</span>
+        </div>
+        <div class = "dropdown-text" id = "projects-section">
+          <div class = "dropdown-text-content">
             <ul>
               <p class = "list-title">SnapPack</p>
               <li>Mobile app that determines what is missing from a packing checklist using a picture of 
-                    the luggage contents.</dd>
-              <li>Built using React Native, with computer vision functionality implemented through Google Cloud Vision.</dd>
-              <li>Built during HackTX 2019, and won best use of Google API.</dd>
+                    the luggage contents.</li>
+              <li>Built using React Native, with computer vision functionality implemented through Google Cloud Vision.</li>
+              <li>Built during HackTX 2019, and won best use of Google API.</li>
             </ul>
             <ul>
               <p class = "list-title">Pomodoro Timer</p>
-              <li>Chrome extension based on the pomodoro technique for time management and productivity.</dd>
-              <li>Simple timer app with customizable settings for duration and loop count.</dd>
+              <li>Chrome extension based on the pomodoro technique for time management and productivity.</li>
+              <li>Simple timer app with customizable settings for duration and loop count.</li>
             </ul>
             <ul>
               <p class = "list-title">Worksheet Generator</p>
-              <li>JAR application with back end built in JAVA and interface designed using JavaFX.</dd>
-              <li>Randomly generates math problems along with an answer key.</dd>
+              <li>JAR application with back end built in JAVA and interface designed using JavaFX.</li>
+              <li>Randomly generates math problems along with an answer key.</li>
               <li>Customizable with respect to worksheet length, order of magnitude for numbers, 
-                    and which operations  (add, subtract, multiply, divide) to use.</dd>
+                    and which operations  (add, subtract, multiply, divide) to use.</li>
             </ul>
-    </div>
+          </div>
         </div>
       </div>
+        <p>Click here to get a random fact about me:</p>
+      <button onclick = "addRandomGreeting()">Facts</button>
+      <div id = "greeting-container"></div>
     </div>
   </body>
 </html>
