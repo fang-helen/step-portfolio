@@ -24,8 +24,7 @@ h1 {
 .content-left {
   flex: 2 3 50%;
   margin-bottom: 0;
-  padding: 5%;
-  padding-bottom: 0;
+  padding-top: 5%;
   text-align: center;
 }
 
