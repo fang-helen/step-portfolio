@@ -22,9 +22,10 @@ h1 {
 }
 
 .content-left {
-  flex: 3 3 50%;
+  flex: 2 3 50%;
   margin-bottom: 0;
   padding: 5%;
+  padding-bottom: 0;
   text-align: center;
 }
 
