@@ -66,7 +66,7 @@ function rotateItem(index) {
     var textContent = document.getElementsByClassName("dropdown-text-content")[index];
     if(!icon.classList.contains("clicked")) {
         icon.classList.add("clicked");
-        text.style.height = (textContent.clientHeight + 40) + "px";
+        text.style.height = (textContent.clientHeight + 60) + "px";
     } else {
         icon.classList.remove("clicked");
         text.style.height = "0";
