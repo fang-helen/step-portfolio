@@ -1,19 +1,31 @@
 /* General */
 
+@font-face {
+  font-family: Barlow;
+  src: url(font/barlow.ttf);
+}
+
 #body {
   background: #3f3f44;
-  color: #f7f7f7;
   display: flex;
   flex-flow: row wrap;
-  font: 100%/1.6 "Trebuchet MS", Helvetica, sans-serif;
+  font: 100%/1.6 "Barlow", "Trebuchet MS", Helvetica, sans-serif;
+  font-size: 20px;
   margin: auto;
-  padding: 5%;
+  padding-bottom: 5%;
+}
+
+h1 {
+  font-size: 6vw;
+  margin: 0;
+  padding: 0;
 }
 
 .content-left {
   flex: 3 3 50%;
+  margin-bottom: 0;
+  padding: 5%;
   text-align: center;
-  padding: 10px;
 }
 
 .content-right {
@@ -34,7 +46,12 @@
 }
 
 a:link, a:visited {
-  color:#f7f7f7;
+  color:#3f3f44;
+}
+
+#links {
+  margin: auto;
+  padding: 0;
 }
 
 .accent1 {
@@ -91,11 +108,11 @@ a:link, a:visited {
 }
 
 .dropdown-text {
-    display: block;
-    height: 0;
-    margin-left: 80px;
-    overflow: hidden;
-    transition: .5s ease;
+  display: block;
+  height: 0;
+  margin-left: 80px;
+  overflow: hidden;
+  transition: .5s ease;
 }
 
 .dropdown-text-content {
@@ -128,8 +145,16 @@ a:link, a:visited {
 #pfp {
   border-radius: 15%;
   max-width: 50%;
+  max-height: 65%;
   object-fit: contain;
 }
+
+.link-icon {
+  height: 25px;
+  margin: 10px;
+  width: 25px;
+}
+
 
 /* Projects */
 
