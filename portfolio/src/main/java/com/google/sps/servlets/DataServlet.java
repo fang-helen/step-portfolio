@@ -14,6 +14,13 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,6 +42,16 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+
+    msgs = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      String content = (String) entity.getProperty("content");
+      msgs.add(content);
+    }
     response.setContentType("text/html;");
     String json = convertToJson(msgs);
     response.getWriter().println(json);
@@ -68,9 +85,17 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String text = request.getParameter("enter-text");
     if(text == null) {
+        response.sendRedirect("/index.html");
         return;
     }
-    msgs.add(text);
+    // msgs.add(text);
+
+    Entity comment = new Entity("Comment");
+    comment.setProperty("content", text);
+    comment.setProperty("timestamp", System.currentTimeMillis());
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(comment);
 
     response.sendRedirect("/index.html");
 
