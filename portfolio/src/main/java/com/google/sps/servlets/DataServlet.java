@@ -20,13 +20,51 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.ArrayList;
+
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  private ArrayList<String> msgs;
+
+  @Override
+  public void init() {
+    msgs = new ArrayList<>();
+
+    msgs.add("Hello!");
+    msgs.add("Here is a message.");
+    msgs.add("Here is another message.");
+  }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
-    response.getWriter().println("Hello Helen!");
+    String json = convertToJson(msgs);
+    response.getWriter().println(json);
+  }
+
+  private String convertToJson(ArrayList<String> list) {
+      StringBuilder sb = new StringBuilder();
+      sb.append("{");
+      sb.append("\"name\":\"msgs\",");
+      sb.append("\"contents\":");
+      sb.append("[");
+      for(int i = 0; i < msgs.size()-1; i++) {
+        sb.append("{\"message\": ");
+        sb.append("\"");
+        sb.append(msgs.get(i));
+        sb.append("\"},");
+      }
+      sb.append("{\"message\": ");
+      sb.append("\"");
+      sb.append(msgs.get(msgs.size()-1));
+      sb.append("\"}");
+
+      sb.append("]");
+      sb.append("}");
+
+      return sb.toString();
+
   }
 }
