@@ -6,7 +6,7 @@
     <link rel = "stylesheet" href = "style.css">
     <script src = "script.js"></script>
   </head>
-  <body id = "body" class = "base" onload = "loadLayout()">
+  <body id = "body" class = "base" onload = "loadLayout(); getHello()">
     <div class = "content-left">
       <h1>Hello!</h1>
       <img src = "images/pfp.jpg" id = "pfp" alt = "a picture of me!"/>
@@ -24,9 +24,14 @@
             aspiring software engineer.</p>
         <p>Click <a href = "/data">this link</a> to view servlet data!</p>
         <div id = "hello">
-            <button onclick = "getHello()">Click!</button>
+            <button onclick = "getHello()">View Comments!</button>
             <p id = "helloTarget"></p>
         </div>
+        <form action = "/data" method = "POST">
+          <p>Add a comment...</p>
+          <textarea name = "enter-text"></textarea>
+          <input type = "submit"/>
+        </form>
       </div>
     </div>
     <div class = "content-right">

@@ -31,10 +31,6 @@ public class DataServlet extends HttpServlet {
   @Override
   public void init() {
     msgs = new ArrayList<>();
-
-    msgs.add("Hello!");
-    msgs.add("Here is a message.");
-    msgs.add("Here is another message.");
   }
 
   @Override
@@ -65,6 +61,18 @@ public class DataServlet extends HttpServlet {
       sb.append("}");
 
       return sb.toString();
+
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String text = request.getParameter("enter-text");
+    if(text == null) {
+        return;
+    }
+    msgs.add(text);
+
+    response.sendRedirect("/index.html");
 
   }
 }
