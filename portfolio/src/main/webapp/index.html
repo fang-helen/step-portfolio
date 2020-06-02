@@ -22,7 +22,10 @@
         <p>Hi! My name is <span class = "accent1">Helen Fang</span>. </p>
         <p>I am a <span class = "accent2">computer science student</span> at the University of Texas at Austin and 
             aspiring software engineer.</p>
-        
+        <form action = "/data" method = "POST">
+          <textarea name = "enter-text" placeholder = "Leave a comment!"></textarea>
+          <input type = "submit"/>
+        </form>
       </div>
     </div>
     <div class = "content-right">
@@ -33,7 +36,7 @@
         </div>
         <div class = "dropdown-text" id = "about-section">
           <div class = "dropdown-text-content"> 
-            <p>I will be a sophomore at UT Austin this fall. I like to think that I have 
+            <p>I am a rising sophomore at UT Austin. I like to think that I have 
                 a reputation of being a reliable, efficient worker and having an 
                 easygoing personality. I’m interested in computer science because I like 
                 math and logic, and found programming to be really fun after I first 
@@ -111,20 +114,21 @@
       </div>
       <div class = "dropdown-item" onclick = "addRandomGreeting()">
         <div class = "dropdown">
-          <span class = "plus accent1">⟳</span>
+          <span class = "spin accent1">⟳</span>
           <span class = "dropdown-title">Facts</span>
         </div>
         <div id = "greeting-container">Click this box to get a random fact about me!</div>
       </div>
-      <div id = "hello">
-            <button onclick = "getHello()">View Comments!</button>
-            <form action = "/data" method = "POST">
-              <p>Leave a comment</p>
-              <textarea name = "enter-text"></textarea>
-              <input type = "submit"/>
-              </form>
-            <p id = "helloTarget"></p>
+      <div class = "dropdown-item">
+        <div class = "dropdown" onclick = "getComments(); rotateItem(3)">
+          <span class = "plus accent2">+</span>
+          <span class = "dropdown-title">Comments</span>
         </div>
+        <div class = "dropdown-text">
+          <div class = "dropdown-text-content" id = "commentList">
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
