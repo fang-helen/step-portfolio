@@ -20,6 +20,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -28,16 +29,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private ArrayList<String> msgs;
+  private List<Entity> database;
 
   @Override
   public void init() {
-    msgs = new ArrayList<>();
+    database = new ArrayList<>();
   }
 
   @Override
@@ -46,39 +48,15 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-
-    msgs = new ArrayList<>();
+    database = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
-      String content = (String) entity.getProperty("content");
-      msgs.add(content);
+      database.add(entity);
     }
-    response.setContentType("text/html;");
-    String json = convertToJson(msgs);
+
+    response.setContentType("application/json;");
+    Gson gson = new Gson();
+    String json = gson.toJson(database);
     response.getWriter().println(json);
-  }
-
-  private String convertToJson(ArrayList<String> list) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("{");
-      sb.append("\"name\":\"msgs\",");
-      sb.append("\"contents\":");
-      sb.append("[");
-      for(int i = 0; i < msgs.size()-1; i++) {
-        sb.append("{\"message\": ");
-        sb.append("\"");
-        sb.append(msgs.get(i));
-        sb.append("\"},");
-      }
-      sb.append("{\"message\": ");
-      sb.append("\"");
-      sb.append(msgs.get(msgs.size()-1));
-      sb.append("\"}");
-
-      sb.append("]");
-      sb.append("}");
-
-      return sb.toString();
-
   }
 
   @Override
@@ -88,7 +66,6 @@ public class DataServlet extends HttpServlet {
         response.sendRedirect("/index.html");
         return;
     }
-    // msgs.add(text);
 
     Entity comment = new Entity("Comment");
     comment.setProperty("content", text);
@@ -98,6 +75,5 @@ public class DataServlet extends HttpServlet {
     datastore.put(comment);
 
     response.sendRedirect("/index.html");
-
   }
 }
