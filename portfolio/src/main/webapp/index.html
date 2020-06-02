@@ -6,7 +6,7 @@
     <link rel = "stylesheet" href = "style.css">
     <script src = "script.js"></script>
   </head>
-  <body id = "body" class = "base" onload = "loadLayout()">
+  <body id = "body" class = "base" onload = "loadLayout(); getComments()">
     <div class = "content-left">
       <h1>Hello!</h1>
       <img src = "images/pfp.jpg" id = "pfp" alt = "a picture of me!"/>
@@ -24,7 +24,7 @@
             aspiring software engineer.</p>
         <form action = "/data" method = "POST">
           <textarea name = "enter-text" placeholder = "Leave a comment!"></textarea>
-          <input type = "submit"/>
+          <button id = "submit" class = "accent2" type = "submit">⇾</button>
         </form>
       </div>
     </div>
@@ -120,12 +120,18 @@
         <div id = "greeting-container">Click this box to get a random fact about me!</div>
       </div>
       <div class = "dropdown-item">
-        <div class = "dropdown" onclick = "getComments(); rotateItem(3)">
+        <div class = "dropdown" onclick = "rotateItem(3)">
           <span class = "plus accent2">+</span>
           <span class = "dropdown-title">Comments</span>
         </div>
         <div class = "dropdown-text">
-          <div class = "dropdown-text-content" id = "commentList">
+          <div class = "dropdown-text-content">
+            <div id = "comment-list"></div>
+            <div id = "comment-nav">
+                <button id = "left-b" class = "nav-b accent1" onclick = "pageDown()">←</button>
+                <span id = "page-count">/</span>
+                <button id = "right-b" class = "nav-b accent1" onclick = "pageUp()">→</button>
+            </div>
           </div>
         </div>
       </div>
