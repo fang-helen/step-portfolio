@@ -34,7 +34,7 @@ function loadLayout() {
 }
 
 /**
- * Adds a random greeting to the page.
+ * Adds a random fact to the page.
  */
 function addRandomGreeting() {
   const greetings = [
