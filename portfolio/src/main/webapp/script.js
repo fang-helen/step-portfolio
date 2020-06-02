@@ -71,22 +71,23 @@ function rotateItem(index) {
         icon.classList.remove("clicked");
         text.style.height = "0";
     }
-
 }
 
-async function getHello() {
+/* fetches conmment data from servlet */
+async function getComments() {
     const response = await fetch("/data")
     const js = await response.json();
-    const msgs = js.contents;
 
-    const target = document.getElementById("hello");
-    for(var i = 0; i < msgs.length; i++) {
-        target.appendChild(createElement(msgs[i].message));
+    const target = document.getElementById("commentList");
+    target.textContent = "";
+    for(var i = 0; i < js.length; i++) {
+        target.appendChild(createElement(js[i].propertyMap.content));
     }
 }
 
+/* creates a <p> element and returns it */
 function createElement(text) {
-  const elem = document.createElement('p');
+  const elem = document.createElement("p");
   elem.innerHTML = text;
   return elem;
 }
