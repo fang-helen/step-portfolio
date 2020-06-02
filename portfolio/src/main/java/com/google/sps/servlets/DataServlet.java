@@ -30,26 +30,53 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
   private List<Entity> database;
+  private int limit;
+  private boolean descending;
+  private String sortParam;
 
   @Override
   public void init() {
     database = new ArrayList<>();
+    limit = 10;
+    sortParam = "timestamp";
+    descending = true;
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    String paramLimit = request.getParameter("limit");
+    String paramSort = request.getParamter("sort");
+    String paramChoice = request.getParameter("sortBy");
+    if(paramLimit != null) {
+      limit = Integer.parseInt(paramLimit);
+    }
+    if(paramSort != null) {
+        if(paramSort.equals("descending")) {
+            descending = true;
+        }
+        else if (paramOsrt.equals("ascending")) {
+            descending = false;
+        }
+    }
+    if(paramChoice != null) {
+        sortParam = paramChoice;
+    }
+    // todo: only refresh if new parameters don't match old ones. else save json string?
+    Query query = new Query("Comment").addSort(sortParam, (descending) ? SortDirection.DESCENDING : SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     database = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
-      database.add(entity);
+    Iterable<Entity> resultIt = results.asIterable();
+    Iterator<Entity> itr = resultIt.iterator();
+    for(int i = 0; i < limit && itr.hasNext(); i++) {
+        database.add(itr.next());
     }
 
     response.setContentType("application/json;");
