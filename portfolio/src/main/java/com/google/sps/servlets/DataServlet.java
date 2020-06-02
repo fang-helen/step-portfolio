@@ -51,7 +51,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String paramLimit = request.getParameter("limit");
-    String paramSort = request.getParamter("sort");
+    String paramSort = request.getParameter("sort");
     String paramChoice = request.getParameter("sortBy");
     if(paramLimit != null) {
       limit = Integer.parseInt(paramLimit);
@@ -60,7 +60,7 @@ public class DataServlet extends HttpServlet {
         if(paramSort.equals("descending")) {
             descending = true;
         }
-        else if (paramOsrt.equals("ascending")) {
+        else if (paramSort.equals("ascending")) {
             descending = false;
         }
     }

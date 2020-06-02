@@ -15,7 +15,7 @@
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 var js = "";
 var sort = "";
-var numElems = 2;
+var numElems = 10;
 var pg = 1;
 
 /**
@@ -78,7 +78,9 @@ function rotateItem(index) {
 
 /* fetches conmment data from servlet */
 async function getComments() {
-  const response = await fetch("/data")
+  const limit = document.getElementById("limit").value;
+  const direction = document.getElementById("sort-dir").value;
+  const response = await fetch("/data?limit=" + limit + "&sort=" + direction);
   js = await response.json();
 
   refreshComments();
