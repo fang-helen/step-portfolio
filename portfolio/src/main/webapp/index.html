@@ -11,10 +11,10 @@
       <h1>Hello!</h1>
       <img src = "images/pfp.jpg" id = "pfp" alt = "a picture of me!"/>
       <div id = "links">
-          <a href = "https://www.linkedin.com/in/helen-fang/">
-             <img src = "images/linkedin.png" alt = "LinkedIn" class = "link-icon"/>
+          <a href = "https://www.linkedin.com/in/helen-fang/" class = "link-link">
+             <img src = "images/linkedin.png" alt = "Linkedin" class = "link-icon"/>
           </a>
-          <a href = "https://github.com/fang-helen">
+          <a href = "https://github.com/fang-helen" class = "link-link">
             <img src = "images/git.png" alt = "Github" class = "link-icon"/>
           </a>
       </div>
@@ -22,11 +22,7 @@
         <p>Hi! My name is <span class = "accent1">Helen Fang</span>. </p>
         <p>I am a <span class = "accent2">computer science student</span> at the University of Texas at Austin and 
             aspiring software engineer.</p>
-        <p>Click <a href = "/data">this link</a> to view servlet data!</p>
-        <div id = "hello">
-            <button onclick = "getHello()">Click!</button>
-            <p id = "helloTarget"></p>
-        </div>
+        
       </div>
     </div>
     <div class = "content-right">
@@ -120,6 +116,15 @@
         </div>
         <div id = "greeting-container">Click this box to get a random fact about me!</div>
       </div>
+      <div id = "hello">
+            <button onclick = "getHello()">View Comments!</button>
+            <form action = "/data" method = "POST">
+              <p>Leave a comment</p>
+              <textarea name = "enter-text"></textarea>
+              <input type = "submit"/>
+              </form>
+            <p id = "helloTarget"></p>
+        </div>
     </div>
   </body>
 </html>

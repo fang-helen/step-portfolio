@@ -76,7 +76,17 @@ function rotateItem(index) {
 
 async function getHello() {
     const response = await fetch("/data")
-    const hello = await response.text();
+    const js = await response.json();
+    const msgs = js.contents;
 
-    document.getElementById("helloTarget").innerText = hello;
+    const target = document.getElementById("hello");
+    for(var i = 0; i < msgs.length; i++) {
+        target.appendChild(createElement(msgs[i].message));
+    }
+}
+
+function createElement(text) {
+  const elem = document.createElement('p');
+  elem.innerHTML = text;
+  return elem;
 }
