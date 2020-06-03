@@ -50,6 +50,20 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    
+    // deleting single comment
+    if(request.getParameter("index") != null) {
+      int i = Integer.parseInt(request.getParameter("index"));
+      if(i > database.size()) {
+        throw new IOException("requested index is out of bounds");
+      }
+      datastore.delete(database.get(i).getKey());
+      database.remove(i);
+      return;
+    }
+
+    // querying datastore elements
     String paramLimit = request.getParameter("limit");
     String paramSort = request.getParameter("sort");
     String paramChoice = request.getParameter("sortBy");
@@ -69,7 +83,6 @@ public class DataServlet extends HttpServlet {
     }
     // todo: only recompute if new parameters don't match old ones. else save json string?
     Query query = new Query("Comment").addSort(sortParam, (descending) ? SortDirection.DESCENDING : SortDirection.ASCENDING);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     database = new ArrayList<>();

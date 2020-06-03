@@ -13,7 +13,7 @@
 // limitations under the License.
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-//json string of all queried comments
+//json "cache" of currently queried comments
 var js = "";
 
 // current sort direction
@@ -204,7 +204,8 @@ async function deleteAllComments() {
   getComments();
 }
 
-function deleteComment(i) {
-  var obj = js[i];
-  document.getElementById("json").innerText = obj.key.kind + " " + obj.key.id + " " + obj.propertyMap.content;
+async function deleteComment(i) {
+  const response = await fetch("/data?index=" + i);
+  js.splice(i, 1);
+  refreshComments();
 }
