@@ -39,7 +39,7 @@ public class DeleteServlet extends HttpServlet {
     }
 
     for(Key k: keys) {
-        datastore.delete(k);
+      datastore.delete(k);
     }
 
     response.sendRedirect("/index.html");
