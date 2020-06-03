@@ -122,7 +122,7 @@ function commentConfig() {
  
 /* increment comments page number */
 function pageUp() {
-  if(pg < Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage)) {
+  if(pg < computeMaxPage()) {
     pg ++;
     refreshComments();
   }
@@ -138,8 +138,9 @@ function pageDown() {
 
 /* refreshes the comment display div based on updated settings */
 function refreshComments() {
-  if(pg > Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage)) {
-    Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage);
+  var maxPage = computeMaxPage();
+  if(pg > maxPage) {
+    pg = maxPage;
   } else if (pg < 1) {
     pg = 1;
   }
@@ -150,7 +151,7 @@ function refreshComments() {
     target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp));
   }
   const pageCount = document.getElementById("page-count");
-  pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage);
+  pageCount.innerHTML = pg + "/" + maxPage;
 
   var icon = document.getElementById("plus-comment");
   var text = document.getElementById("comment-wrapper");
@@ -158,6 +159,10 @@ function refreshComments() {
   if(icon.classList.contains("clicked")) {
     text.style.height = (textContent.clientHeight + 60) + "px";
   }
+}
+
+function computeMaxPage() {
+  return Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage);
 }
 
 /* creates a <p> element and returns it */
