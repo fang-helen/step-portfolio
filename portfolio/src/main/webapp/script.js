@@ -14,9 +14,16 @@
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 var js = "";
-var sort = "";
-var numElems = 10;
+
+// current sort direction
+var sortDir = "descending";
+// num comments per pages
+var numElems = 5;
+// total comments shown on page
+var totalElems = 15;
+// current page number
 var pg = 1;
+
 
 /**
  * Adjusts layout of page at load time based on window size.
@@ -36,6 +43,10 @@ function loadLayout() {
     right.style.margin = "auto";
     right.style.padding = "0";
   }
+
+  document.getElementById("sort-dir").value = sortDir;
+  document.getElementById("limit").value = totalElems;
+  document.getElementById("pg-limit").value = numElems;
 }
 
 /**
@@ -78,37 +89,67 @@ function rotateItem(index) {
 
 /* fetches conmment data from servlet */
 async function getComments() {
-  const limit = document.getElementById("limit").value;
-  const direction = document.getElementById("sort-dir").value;
-  const response = await fetch("/data?limit=" + limit + "&sort=" + direction);
+  const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
   js = await response.json();
 
   refreshComments();
 }
 
-function pageUp() {
-    if(pg < Math.ceil(js.length/numElems)) {
-        pg ++;
+function commentConfig() {
+    var newSort = document.getElementById("sort-dir").value;
+    var newElems = parseInt(document.getElementById("pg-limit").value);
+    var newTotal = parseInt(document.getElementById("limit").value);
+    var needGet = false;
+    var needRefresh = false;
+
+    if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length) {
+      needGet = true;
+    } else if (newTotal < totalElems || numElems != newElems) {
+        needRefresh = true;
+    }
+
+    sortDir = newSort;
+    totalElems = newTotal;
+    numElems = newElems;
+
+    if(needGet) {
+        getComments();
+    } else if (needRefresh) {
         refreshComments();
     }
 }
+ 
+/* increment comments page number */
+function pageUp() {
+  if(pg < Math.ceil(Math.min(js.length, totalElems)/numElems)) {
+    pg ++;
+    refreshComments();
+  }
+}
 
+/* decrement comments page number */
 function pageDown() {
-    if(pg > 1) {
-        pg --;
-        refreshComments();
-    }
+  if(pg > 1) {
+    pg --;
+    refreshComments();
+  }
 }
 
 /* refreshes the comment display div based on updated settings */
 function refreshComments() {
+  if(pg > Math.ceil(Math.min(js.length, totalElems)/numElems)) {
+    Math.ceil(Math.min(js.length, totalElems)/numElems);
+  } else if (pg < 1) {
+    pg = 1;
+  }
+
   const target = document.getElementById("comment-list");
   target.textContent = "";
-  for(var i = (pg-1)*numElems; i < js.length && i < pg*numElems; i++) {
+  for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems && i < totalElems; i++) {
     target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp));
   }
   const pageCount = document.getElementById("page-count");
-  pageCount.innerHTML = pg + "/" + Math.ceil(js.length/numElems);
+  pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElems);
 }
 
 /* creates a <p> element and returns it */
@@ -136,16 +177,6 @@ function dateString(date) {
     const hour = date.getHours();
     const min = date.getMinutes();
     return hour + ":" + min + "   " + month + " " + day + ", " + year;
-}
-
-/* comparator function to list newest first */
-function compareNewest(a, b) {
-    return b.propertyMap.timestamp - a.propertyMap.timestamp;
-}
-
-/* comparator function to list oldest first */
-function compareOldest(a, b) {
-    return a.propertyMap.timestamp - b.propertyMap.timestamp;
 }
 
 async function deleteAllComments() {
