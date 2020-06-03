@@ -151,6 +151,13 @@ function refreshComments() {
   }
   const pageCount = document.getElementById("page-count");
   pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElems);
+
+  var icon = document.getElementById("plus-comment");
+  var text = document.getElementById("comment-wrapper");
+  var textContent = document.getElementById("comment-box");
+  if(icon.classList.contains("clicked")) {
+    text.style.height = (textContent.clientHeight + 60) + "px";
+  }
 }
 
 /* creates a <p> element and returns it */
@@ -181,5 +188,6 @@ function dateString(date) {
 }
 
 async function deleteAllComments() {
-    const response = await fetch("/delete-data");
+    await fetch(new Request("/delete-data", {method: "POST"}));
+    getComments();
 }
