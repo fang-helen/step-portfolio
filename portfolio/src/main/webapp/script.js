@@ -147,3 +147,7 @@ function compareNewest(a, b) {
 function compareOldest(a, b) {
     return a.propertyMap.timestamp - b.propertyMap.timestamp;
 }
+
+async function deleteAllComments() {
+    const response = await fetch("/delete-data");
+}

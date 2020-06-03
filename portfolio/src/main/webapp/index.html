@@ -26,6 +26,7 @@
           <textarea name = "enter-text" placeholder = "Leave a comment!"></textarea>
           <button id = "submit" class = "accent2" type = "submit">⇾</button>
         </form>
+        <button onclick = "deleteAllComments()">DELETE COMMENTS</button>
       </div>
     </div>
     <div class = "content-right">
@@ -127,14 +128,16 @@
         <div class = "dropdown-text">
           <div class = "dropdown-text-content" id = "comment-box">
             <div id = "comment-settings">
-              <span>Limit to <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "100"> elements</span>
+              <span>Limit to <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000">
+                     comments and <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000"> per page
+              </span>
               <span>Sort: 
                 <select name = "sort" id = "sort-dir">
                   <option value = "descending" selected = "selected">Newest first</option>
                   <option value = "ascending">Oldest first</option>
                 </select>
               </span>
-              <button id = "ok-settings" onclick = "getComments()">OK</button>
+              <button id = "ok-settings" onclick = "getComments()" class = "accent2">OK</button>
             </div>
             <div id = "comment-list"></div>
             <div id = "comment-nav">
