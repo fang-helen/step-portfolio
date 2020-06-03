@@ -87,8 +87,8 @@ function rotateItem(index) {
   }
 }
 
-/* fetches conmment data from servlet */
-async function getComments() {
+/* fetches comment data from servlet and refreshes the comment box */
+async function getAndRefreshComments() {
   const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
   js = await response.json();
 
@@ -114,7 +114,7 @@ function commentConfig() {
   numElemsPerPage = newElemsPerPage;
 
   if(needGet) {
-    getComments();
+    getAndRefreshComments();
   } else if (needRefresh) {
     refreshComments();
   }
@@ -189,5 +189,5 @@ function dateString(date) {
 
 async function deleteAllComments() {
     await fetch(new Request("/delete-data", {method: "POST"}));
-    getComments();
+    getAndRefreshComments();
 }
