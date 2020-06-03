@@ -18,7 +18,7 @@ var js = "";
 // current sort direction
 var sortDir = "descending";
 // num comments per pages
-var numElems = 5;
+var numElemsPerPage = 5;
 // total comments shown on page
 var totalElems = 15;
 // current page number
@@ -46,7 +46,7 @@ function loadLayout() {
 
   document.getElementById("sort-dir").value = sortDir;
   document.getElementById("limit").value = totalElems;
-  document.getElementById("pg-limit").value = numElems;
+  document.getElementById("pg-limit").value = numElemsPerPage;
 }
 
 /**
@@ -98,20 +98,20 @@ async function getComments() {
 /* Update comment view options */
 function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
-  var newElems = parseInt(document.getElementById("pg-limit").value);
+  var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
   var newTotal = parseInt(document.getElementById("limit").value);
   var needGet = false;
   var needRefresh = false;
 
   if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length) {
     needGet = true;
-  } else if (newTotal < totalElems || numElems != newElems) {
+  } else if (newTotal < totalElems || numElemsPerPage != newElemsPerPage) {
     needRefresh = true;
   }
 
   sortDir = newSort;
   totalElems = newTotal;
-  numElems = newElems;
+  numElemsPerPage = newElemsPerPage;
 
   if(needGet) {
     getComments();
@@ -122,7 +122,7 @@ function commentConfig() {
  
 /* increment comments page number */
 function pageUp() {
-  if(pg < Math.ceil(Math.min(js.length, totalElems)/numElems)) {
+  if(pg < Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage)) {
     pg ++;
     refreshComments();
   }
@@ -138,19 +138,19 @@ function pageDown() {
 
 /* refreshes the comment display div based on updated settings */
 function refreshComments() {
-  if(pg > Math.ceil(Math.min(js.length, totalElems)/numElems)) {
-    Math.ceil(Math.min(js.length, totalElems)/numElems);
+  if(pg > Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage)) {
+    Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage);
   } else if (pg < 1) {
     pg = 1;
   }
 
   const target = document.getElementById("comment-list");
   target.textContent = "";
-  for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems && i < totalElems; i++) {
+  for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
     target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp));
   }
   const pageCount = document.getElementById("page-count");
-  pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElems);
+  pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage);
 
   var icon = document.getElementById("plus-comment");
   var text = document.getElementById("comment-wrapper");
