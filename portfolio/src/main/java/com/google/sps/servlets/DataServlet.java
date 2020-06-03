@@ -73,17 +73,16 @@ public class DataServlet extends HttpServlet {
 
     Query query = new Query("Comment");
     if(descending) {
-      query.addSort(SortDirection.DESCENDING);
+      query.addSort(sortParam, SortDirection.DESCENDING);
     } else {
-      query.addSort(SortDirection.ASCENDING);
+      query.addSort(sortParam, SortDirection.ASCENDING);
     }
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     database = new ArrayList<>();
-    Iterable<Entity> resultIt = results.asIterable();
-    Iterator<Entity> itr = resultIt.iterator();
+    Iterator<Entity> itr = results.asIterable().iterator();
     for(int i = 0; i < limit && itr.hasNext(); i++) {
         database.add(itr.next());
     }
@@ -98,8 +97,8 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String text = request.getParameter("enter-text");
     if(text == null || text.length() == 0) {
-        response.sendRedirect("/index.html");
-        return;
+      response.sendRedirect("/index.html");
+      return;
     }
 
     Entity comment = new Entity("Comment");
