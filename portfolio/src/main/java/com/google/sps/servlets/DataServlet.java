@@ -62,6 +62,8 @@ public class DataServlet extends HttpServlet {
       }
       else if (paramSort.equals("ascending")) {
         descending = false;
+      } else {
+        throw new IOException("invalid sort direction");
       }
     }
     if(paramChoice != null) {
