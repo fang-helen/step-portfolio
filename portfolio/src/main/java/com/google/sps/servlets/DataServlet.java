@@ -30,27 +30,61 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private List<Entity> database;
+  private List<Entity> database; // used to extract Entities from datastore query
+  private int limit; // upper limit of how many results to return
+  private boolean descending; // sort direction - ascending or descending
+  private String sortParam; // sort criteria
 
   @Override
   public void init() {
     database = new ArrayList<>();
+    limit = 10;
+    sortParam = "timestamp";
+    descending = true;
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    String paramLimit = request.getParameter("limit");
+    String paramSort = request.getParameter("sort");
+    String paramChoice = request.getParameter("sortBy");
+    if(paramLimit != null) {
+      limit = Integer.parseInt(paramLimit);
+    }
+    if(paramSort != null) {
+      if(paramSort.equals("descending")) {
+        descending = true;
+      }
+      else if (paramSort.equals("ascending")) {
+        descending = false;
+      } else {
+        throw new IOException("invalid sort direction");
+      }
+    }
+    if(paramChoice != null) {
+      sortParam = paramChoice;
+    }
+    // todo: only recompute if new parameters don't match old ones. else save json string?
+
+    Query query = new Query("Comment");
+    if(descending) {
+      query.addSort(sortParam, SortDirection.DESCENDING);
+    } else {
+      query.addSort(sortParam, SortDirection.ASCENDING);
+    }
+    
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     database = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
-      database.add(entity);
+    Iterator<Entity> itr = results.asIterable().iterator();
+    for(int i = 0; i < limit && itr.hasNext(); i++) {
+        database.add(itr.next());
     }
 
     response.setContentType("application/json;");
@@ -62,9 +96,9 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String text = request.getParameter("enter-text");
-    if(text == null) {
-        response.sendRedirect("/index.html");
-        return;
+    if(text == null || text.length() == 0) {
+      response.sendRedirect("/index.html");
+      return;
     }
 
     Entity comment = new Entity("Comment");

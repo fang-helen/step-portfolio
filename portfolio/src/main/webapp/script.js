@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+var js = "";
+var sort = "";
+var numElems = 10;
+var pg = 1;
 
 /**
  * Adjusts layout of page at load time based on window size.
@@ -73,19 +78,72 @@ function rotateItem(index) {
 
 /* fetches conmment data from servlet */
 async function getComments() {
-  const response = await fetch("/data")
-  const js = await response.json();
+  const limit = document.getElementById("limit").value;
+  const direction = document.getElementById("sort-dir").value;
+  const response = await fetch("/data?limit=" + limit + "&sort=" + direction);
+  js = await response.json();
 
-  const target = document.getElementById("commentList");
+  refreshComments();
+}
+
+function pageUp() {
+    if(pg < Math.ceil(js.length/numElems)) {
+        pg ++;
+        refreshComments();
+    }
+}
+
+function pageDown() {
+    if(pg > 1) {
+        pg --;
+        refreshComments();
+    }
+}
+
+/* refreshes the comment display div based on updated settings */
+function refreshComments() {
+  const target = document.getElementById("comment-list");
   target.textContent = "";
-  for(var i = 0; i < js.length; i++) {
-    target.appendChild(createElement(js[i].propertyMap.content));
+  for(var i = (pg-1)*numElems; i < js.length && i < pg*numElems; i++) {
+    target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp));
   }
+  const pageCount = document.getElementById("page-count");
+  pageCount.innerHTML = pg + "/" + Math.ceil(js.length/numElems);
 }
 
 /* creates a <p> element and returns it */
-function createElement(text) {
-  const elem = document.createElement("p");
-  elem.innerHTML = text;
-  return elem;
+function createElement(text, millis) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "comment";
+  const textWrapper = document.createElement("div");
+  textWrapper.className = "comment-text";
+  const timeWrapper = document.createElement("div");
+  timeWrapper.className = "comment-time";
+
+  const date = new Date(millis);
+  textWrapper.innerText = text;
+  timeWrapper.innerText = dateString(date);
+  wrapper.appendChild(textWrapper);
+  wrapper.appendChild(timeWrapper);
+  return wrapper;
+}
+
+/* condensed toString of Date information */
+function dateString(date) {
+    const year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const hour = date.getHours();
+    const min = date.getMinutes();
+    return hour + ":" + min + "   " + month + " " + day + ", " + year;
+}
+
+/* comparator function to list newest first */
+function compareNewest(a, b) {
+    return b.propertyMap.timestamp - a.propertyMap.timestamp;
+}
+
+/* comparator function to list oldest first */
+function compareOldest(a, b) {
+    return a.propertyMap.timestamp - b.propertyMap.timestamp;
 }

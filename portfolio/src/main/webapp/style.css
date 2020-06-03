@@ -68,6 +68,7 @@ h1 {
   font-size: 24px;
   margin: auto;
   padding: 10px;
+  padding-bottom: 0;
   width: 70%;
 }
 
@@ -80,13 +81,36 @@ a:link, a:visited {
   padding: 0;
 }
 
+form {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 10% 20px 10%;
+    width: 80%;
+}
+
 textarea {
+    border-style: none;
+    color: #f7f7f7;
+    display: inline-block;
     font-size: 16px;
     font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
-    background-color: #f7f7f7;
-    width: 50%;
-    height: 20%;
+    background-color: transparent;
+    height: 60px;
+    width: 90%;
+    margin-right: 10px;
+    flex: 1 1 auto;
 }
+
+ #submit {
+    font-size: 45px;
+    background-color: transparent;
+    border-style: none;
+    cursor: pointer;
+    flex: 0 0 auto;
+    top: 30%;
+ }
 
 /* Dropdowns */
 
@@ -99,6 +123,7 @@ textarea {
 
 .dropdown {
   align-content: left;
+  cursor: pointer;
   display: flex;
   height: 55px;
   margin: 0;
@@ -110,7 +135,7 @@ textarea {
   line-height: 1;
   transition: font-size .1s, transform .5s;
   vertical-align: middle;
-  width: 80px;
+  width: 80px;  
 }
 
 .plus:hover {
@@ -153,11 +178,6 @@ textarea {
     margin: 0 10% 0 10%;
 }
 
-/* #commentList {
-    max-height: 400px;
-    overflow: scroll;
-} */
-
 #greeting-container {
   margin: 10px auto 20px 65px;
 }
@@ -198,4 +218,51 @@ ul {
 .list-title {
   font-weight: bold;
   margin: 0;
+}
+
+/* Comments */
+
+#comment-box {
+    margin-top: 30px;
+}
+
+#comment-list {
+    margin-top: 35px;
+    max-height: 500px;
+    overflow: scroll;
+}
+
+.comment {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.comment-text {
+    font-size: 16px;
+    flex: 1 1 auto;
+    width: 70%;
+}
+
+.comment-time {
+  font-size: 12px;
+  flex: 1 1 auto;
+  margin-left: 10px;
+  width: 20%;
+}
+
+#comment-nav {
+  width: 100%;
+}
+
+.nav-b {
+  font-size: 35px;
+  cursor: pointer;
+  background-color: transparent;
+  border-style: none;
+}
+
+#page-count {
+    font-size: 16px;
 }
