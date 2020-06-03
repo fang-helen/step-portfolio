@@ -95,28 +95,29 @@ async function getComments() {
   refreshComments();
 }
 
+/* Update comment view options */
 function commentConfig() {
-    var newSort = document.getElementById("sort-dir").value;
-    var newElems = parseInt(document.getElementById("pg-limit").value);
-    var newTotal = parseInt(document.getElementById("limit").value);
-    var needGet = false;
-    var needRefresh = false;
+  var newSort = document.getElementById("sort-dir").value;
+  var newElems = parseInt(document.getElementById("pg-limit").value);
+  var newTotal = parseInt(document.getElementById("limit").value);
+  var needGet = false;
+  var needRefresh = false;
 
-    if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length) {
-      needGet = true;
-    } else if (newTotal < totalElems || numElems != newElems) {
-        needRefresh = true;
-    }
+  if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length) {
+    needGet = true;
+  } else if (newTotal < totalElems || numElems != newElems) {
+    needRefresh = true;
+  }
 
-    sortDir = newSort;
-    totalElems = newTotal;
-    numElems = newElems;
+  sortDir = newSort;
+  totalElems = newTotal;
+  numElems = newElems;
 
-    if(needGet) {
-        getComments();
-    } else if (needRefresh) {
-        refreshComments();
-    }
+  if(needGet) {
+    getComments();
+  } else if (needRefresh) {
+    refreshComments();
+  }
 }
  
 /* increment comments page number */
@@ -171,12 +172,12 @@ function createElement(text, millis) {
 
 /* condensed toString of Date information */
 function dateString(date) {
-    const year = date.getFullYear();
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const hour = date.getHours();
-    const min = date.getMinutes();
-    return hour + ":" + min + "   " + month + " " + day + ", " + year;
+  const year = date.getFullYear();
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  const hour = date.getHours();
+  const min = date.getMinutes();
+  return hour + ":" + min + "   " + month + " " + day + ", " + year;
 }
 
 async function deleteAllComments() {
