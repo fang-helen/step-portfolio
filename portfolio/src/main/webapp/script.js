@@ -147,7 +147,7 @@ function refreshComments() {
   const target = document.getElementById("comment-list");
   target.textContent = "";
   for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems && i < totalElems; i++) {
-    target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp));
+    target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
   }
   const pageCount = document.getElementById("page-count");
   pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElems);
@@ -160,20 +160,30 @@ function refreshComments() {
   }
 }
 
-/* creates a <p> element and returns it */
-function createElement(text, millis) {
+/* creates a <div> element to hold comment info and returns it */
+function createElement(text, millis, i) {
+  const date = new Date(millis);
+
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
+
   const textWrapper = document.createElement("div");
   textWrapper.className = "comment-text";
+  textWrapper.innerText = text;
+
   const timeWrapper = document.createElement("div");
   timeWrapper.className = "comment-time";
-
-  const date = new Date(millis);
-  textWrapper.innerText = text;
   timeWrapper.innerText = dateString(date);
+
+  const trash = document.createElement("img");
+  trash.className = "trash";
+  trash.alt = "Delete";
+  trash.src = "/images/git.png";
+  trash.onclick = "deleteComment("+i+")";
+  
   wrapper.appendChild(textWrapper);
   wrapper.appendChild(timeWrapper);
+  wrapper.appendChild(trash);
   return wrapper;
 }
 
@@ -190,4 +200,8 @@ function dateString(date) {
 async function deleteAllComments() {
     await fetch(new Request("/delete-data", {method: "POST"}));
     getComments();
+}
+
+function deleteComment(i) {
+
 }
