@@ -120,7 +120,7 @@ function commentConfig() {
   }
 }
  
-/* Increments the comment page number. */
+/* Increments the comment page number and refreshes the page. */
 function pageUp() {
   if(pg < computeMaxPage()) {
     pg ++;
@@ -128,7 +128,7 @@ function pageUp() {
   }
 }
 
-/* Decrements the comment page number. */
+/* Decrements the comment page number and refreshes the page. */
 function pageDown() {
   if(pg > 1) {
     pg --;
