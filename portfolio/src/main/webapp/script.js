@@ -27,7 +27,7 @@ var pg = 1;
 
 /**
  * Adjusts layout of page at load time based on window size.
- * If the window is narrow, displayes items in a single column instead of side-by-side
+ * If the window is narrow, displayes items in a single column instead of side-by-side.
  */
 function loadLayout() {
   if (window.innerWidth < 1000) {
@@ -87,7 +87,7 @@ function rotateItem(index) {
   }
 }
 
-/* fetches comment data from servlet and refreshes the comment box */
+/* Fetches comment data from the servlet and refreshes the comment box content. */
 async function getAndRefreshComments() {
   const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
   js = await response.json();
@@ -95,7 +95,7 @@ async function getAndRefreshComments() {
   refreshComments();
 }
 
-/* Update comment view options */
+/* Updates the comment display based on user input. */
 function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
@@ -120,7 +120,7 @@ function commentConfig() {
   }
 }
  
-/* increment comments page number */
+/* Increments the comment page number. */
 function pageUp() {
   if(pg < computeMaxPage()) {
     pg ++;
@@ -128,7 +128,7 @@ function pageUp() {
   }
 }
 
-/* decrement comments page number */
+/* Decrements the comment page number. */
 function pageDown() {
   if(pg > 1) {
     pg --;
@@ -136,7 +136,7 @@ function pageDown() {
   }
 }
 
-/* refreshes the comment display div based on updated settings */
+/* Refreshes the comment display div using the corresponding global variables. */
 function refreshComments() {
   var maxPage = computeMaxPage();
   if(pg > maxPage) {
@@ -161,11 +161,17 @@ function refreshComments() {
   }
 }
 
+/* Computes and returns the maximum page number. */
 function computeMaxPage() {
   return Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage);
 }
 
-/* creates a <p> element and returns it */
+/** 
+ * Creates a <div> element for an individual comment and returns it. 
+ * 
+ * @param {string} text The text content of the comment.
+ * @param {number} millis The timestamp, in milliseconds, of the comment.
+ */
 function createElement(text, millis) {
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
@@ -182,7 +188,7 @@ function createElement(text, millis) {
   return wrapper;
 }
 
-/* condensed toString of Date information */
+/* Returns a condensed toString of Date information. */
 function dateString(date) {
   const year = date.getFullYear();
   const month = months[date.getMonth()];
@@ -192,6 +198,7 @@ function dateString(date) {
   return hour + ":" + min + "   " + month + " " + day + ", " + year;
 }
 
+/* Deletes all comments from the database and refreshes the page. */
 async function deleteAllComments() {
     await fetch(new Request("/delete-data", {method: "POST"}));
     getAndRefreshComments();
