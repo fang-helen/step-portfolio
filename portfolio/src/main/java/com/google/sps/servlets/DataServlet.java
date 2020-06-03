@@ -67,7 +67,7 @@ public class DataServlet extends HttpServlet {
     if(paramChoice != null) {
         sortParam = paramChoice;
     }
-    // todo: only refresh if new parameters don't match old ones. else save json string?
+    // todo: only recompute if new parameters don't match old ones. else save json string?
     Query query = new Query("Comment").addSort(sortParam, (descending) ? SortDirection.DESCENDING : SortDirection.ASCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
