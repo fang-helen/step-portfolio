@@ -35,10 +35,10 @@ import java.util.Iterator;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private List<Entity> database;
-  private int limit;
-  private boolean descending;
-  private String sortParam;
+  private List<Entity> database; // used to extract Entities from datastore query
+  private int limit; // upper limit of how many results to return
+  private boolean descending; // sort direction - ascending or descending
+  private String sortParam; // sort criteria
 
   @Override
   public void init() {
@@ -57,18 +57,25 @@ public class DataServlet extends HttpServlet {
       limit = Integer.parseInt(paramLimit);
     }
     if(paramSort != null) {
-        if(paramSort.equals("descending")) {
-            descending = true;
-        }
-        else if (paramSort.equals("ascending")) {
-            descending = false;
-        }
+      if(paramSort.equals("descending")) {
+        descending = true;
+      }
+      else if (paramSort.equals("ascending")) {
+        descending = false;
+      }
     }
     if(paramChoice != null) {
-        sortParam = paramChoice;
+      sortParam = paramChoice;
     }
-    // todo: only refresh if new parameters don't match old ones. else save json string?
-    Query query = new Query("Comment").addSort(sortParam, (descending) ? SortDirection.DESCENDING : SortDirection.ASCENDING);
+    // todo: only recompute if new parameters don't match old ones. else save json string?
+
+    Query query = new Query("Comment");
+    if(descending) {
+      query.addSort(SortDirection.DESCENDING);
+    } else {
+      query.addSort(SortDirection.ASCENDING);
+    }
+    
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
