@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+//json string of all queried comments
 var js = "";
 
 // current sort direction
@@ -91,8 +92,7 @@ function rotateItem(index) {
 async function getComments() {
   const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
   js = await response.json();
-
-  refreshComments();
+  refreshComments();  
 }
 
 /* Update comment view options */
@@ -146,7 +146,7 @@ function refreshComments() {
 
   const target = document.getElementById("comment-list");
   target.textContent = "";
-  for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems && i < totalElems; i++) {
+  for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems; i++) {
     target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
   }
   const pageCount = document.getElementById("page-count");
@@ -178,8 +178,10 @@ function createElement(text, millis, i) {
   const trash = document.createElement("img");
   trash.className = "trash";
   trash.alt = "Delete";
-  trash.src = "/images/git.png";
-  trash.onclick = "deleteComment("+i+")";
+  trash.src = "/images/trash.png";
+  trash.onclick = function() {
+    deleteComment(i);
+  };
   
   wrapper.appendChild(textWrapper);
   wrapper.appendChild(timeWrapper);
@@ -198,10 +200,11 @@ function dateString(date) {
 }
 
 async function deleteAllComments() {
-    await fetch(new Request("/delete-data", {method: "POST"}));
-    getComments();
+  await fetch(new Request("/delete-data", {method: "POST"}));
+  getComments();
 }
 
 function deleteComment(i) {
-
+  var obj = js[i];
+  document.getElementById("json").innerText = obj.key.kind + " " + obj.key.id + " " + obj.propertyMap.content;
 }
