@@ -155,7 +155,7 @@ function refreshComments() {
     pageCount.innerHTML = "/";
   } else {  
     for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
-      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
+      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, js[i].propertyMap.upvotes, i));
     }
     pageCount.innerHTML = pg + "/" + maxPage;
   }
@@ -178,9 +178,10 @@ function computeMaxPage() {
  * 
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
+ * @param {number} upvotes The upvote count of the comment.
  * @param {number} i The index of the comment in the js array.
  */
-function createElement(text, millis, i) {
+function createElement(text, millis, upvotes, i) {
   const date = new Date(millis);
 
   const wrapper = document.createElement("div");
@@ -223,7 +224,11 @@ function createElement(text, millis, i) {
 
   const upCounter = document.createElement("div");
   upCounter.className = "up-counter";
-  upCounter.innerText = "0";
+  var count = upvotes;
+  if(upvotes > 0) {
+      count = "+" + upvotes;
+  }
+  upCounter.innerText = count;
 
   const down = document.createElement("div");
   down.className = "down";
