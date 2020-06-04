@@ -127,15 +127,19 @@
         <div class = "dropdown-text" id = "comment-wrapper">
           <div class = "dropdown-text-content" id = "comment-box">
             <div id = "comment-settings">
-              <span>Load only </span>
-              <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
-              <span> comments and </span>
-              <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
-              <span> per page  |  Sort: </span>
-              <select name = "sort" id = "sort-dir">
-                <option value = "descending">Newest first</option>
-                <option value = "ascending">Oldest first</option>
-              </select>
+                <div id = "comment-options">
+                <span>Load only </span>
+                <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
+                <span> comments and </span>
+                <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
+                <span> per page  |  Sort: </span>
+                <select name = "sort" id = "sort-dir">
+                  <option value = "descending">Newest first</option>
+                  <option value = "ascending">Oldest first</option>
+                </select>
+                <span> | Filter by author: </span>
+                <input type = "text" id = "find-author" name = "find-author" class = "input-text" placeholder = "search...">
+              </div>
               <button id = "ok-settings" onclick = "commentConfig()" class = "accent2">OK</button>
             </div>
             <div id = "comment-list">

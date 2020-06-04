@@ -245,6 +245,21 @@ select, select option {
   text-align: center;
 }
 
+#comment-settings {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+#comment-options {
+  width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#comment-options:hover {
+  overflow: scroll;
+}
+
 #ok-settings {
   font-size: 20px;
   text-align: center;
