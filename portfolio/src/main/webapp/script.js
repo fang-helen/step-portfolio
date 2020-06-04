@@ -226,7 +226,9 @@ function createElement(text, millis, upvotes, i) {
   upCounter.className = "up-counter";
   var count = upvotes;
   if(upvotes > 0) {
-      count = "+" + upvotes;
+    count = "+" + upvotes;
+  } else if (upvotes == 0) {
+    count = "";
   }
   upCounter.innerText = count;
 
@@ -274,5 +276,19 @@ async function deleteComment(i) {
 }
 
 async function vote(i, amount) {
+  var upvotes = js[i].propertyMap.upvotes;
+  upvotes += amount;
+  const id = js[i].key.id;
 
+  var countText = upvotes;
+  if(upvotes > 0) {
+    countText = "+" + upvotes;
+  } else if (upvotes == 0) {
+    countText = "";
+  }
+  // do this so visual feedback is instantaneous
+  document.getElementsByClassName("up-counter")[i - (pg-1)*numElemsPerPage].innerText = countText;
+
+  const response = await fetch("/upvote-data?id=" + id + "&vote=" + upvotes);
+  getAndRefreshComments();
 }
