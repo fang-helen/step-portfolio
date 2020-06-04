@@ -213,7 +213,12 @@ async function deleteAllComments() {
 }
 
 async function deleteComment(i) {
-  const id = js[i].key.id;
+  const id = js[(pg-1)*numElems + i].key.id;
+
+  // do this so visual feedback is instantaneous
+  document.getElementsByClassName("comment")[i].style.display = "none";
+
   await fetch("/delete-data?id=" + id);
   getComments();
+
 }
