@@ -27,12 +27,12 @@ public class UpvoteServlet extends HttpServlet {
         vote = Integer.parseInt(request.getParameter("vote"));
       }
       Key key = KeyFactory.createKey("Comment", id);
-      response.setContentType("text/html;");
       try {
         Entity comment = datastore.get(key);
         comment.setProperty("upvotes", vote);
         datastore.put(comment);
       } catch (EntityNotFoundException e) {
+        response.setContentType("text/html;");
         response.getWriter().println("comment not found");
       }
     }
