@@ -51,17 +51,6 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
-    // deleting single comment
-    if(request.getParameter("index") != null) {
-      int i = Integer.parseInt(request.getParameter("index"));
-      if(i > database.size()) {
-        throw new IOException("requested index is out of bounds");
-      }
-      datastore.delete(database.get(i).getKey());
-      database.remove(i);
-      return;
-    }
 
     // querying datastore elements
     String paramLimit = request.getParameter("limit");

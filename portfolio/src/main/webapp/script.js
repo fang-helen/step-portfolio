@@ -213,7 +213,7 @@ async function deleteAllComments() {
 }
 
 async function deleteComment(i) {
-  const response = await fetch("/data?index=" + i);
-  js.splice(i, 1);
-  refreshComments();
+  const id = js[i].key.id;
+  await fetch("/delete-data?id=" + id);
+  getComments();
 }
