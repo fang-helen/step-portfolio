@@ -128,7 +128,7 @@
         <div class = "dropdown-text" id = "comment-wrapper">
           <div class = "dropdown-text-content" id = "comment-box">
             <div id = "comment-settings">
-              <span>Limit to </span>
+              <span>Load only </span>
               <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
               <span> comments and </span>
               <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
@@ -139,7 +139,9 @@
               </select>
               <button id = "ok-settings" onclick = "commentConfig()" class = "accent2">OK</button>
             </div>
-            <div id = "comment-list"></div>
+            <div id = "comment-list">
+              <p>Loading comments...</p>
+            </div>
             <div id = "comment-nav">
               <button id = "left-b" class = "nav-b accent1" onclick = "pageDown()">←</button>
               <span id = "page-count">/</span>

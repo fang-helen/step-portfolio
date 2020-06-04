@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+//json "cache" of currently queried comments
 var js = "";
 
 // current sort direction
@@ -91,8 +92,7 @@ function rotateItem(index) {
 async function getAndRefreshComments() {
   const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
   js = await response.json();
-
-  refreshComments();
+  refreshComments();  
 }
 
 /* Updates the comment display based on user input. */
@@ -144,15 +144,22 @@ function refreshComments() {
   } else if (pg < 1) {
     pg = 1;
   }
-
+  const pageCount = document.getElementById("page-count");
   const target = document.getElementById("comment-list");
   target.textContent = "";
-  for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
-    target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp));
-  }
-  const pageCount = document.getElementById("page-count");
-  pageCount.innerHTML = pg + "/" + maxPage;
 
+  if(js.length == 0 || totalElems == 0) {
+    const p = document.createElement("p");
+    p.innerText = "No comments to see!";
+    target.appendChild(p);
+    pageCount.innerHTML = "/";
+  } else {  
+    for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
+      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
+    }
+    pageCount.innerHTML = pg + "/" + maxPage;
+  }
+  
   var icon = document.getElementById("plus-comment");
   var text = document.getElementById("comment-wrapper");
   var textContent = document.getElementById("comment-box");
@@ -172,19 +179,31 @@ function computeMaxPage() {
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
  */
-function createElement(text, millis) {
+function createElement(text, millis, i) {
+  const date = new Date(millis);
+
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
+
   const textWrapper = document.createElement("div");
   textWrapper.className = "comment-text";
+  textWrapper.innerText = text;
+
   const timeWrapper = document.createElement("div");
   timeWrapper.className = "comment-time";
-
-  const date = new Date(millis);
-  textWrapper.innerText = text;
   timeWrapper.innerText = dateString(date);
+
+  const trash = document.createElement("img");
+  trash.className = "trash";
+  trash.alt = "Delete";
+  trash.src = "/images/trash.png";
+  trash.onclick = function() {
+    deleteComment(i);
+  };
+  
   wrapper.appendChild(textWrapper);
   wrapper.appendChild(timeWrapper);
+  wrapper.appendChild(trash);
   return wrapper;
 }
 
@@ -200,6 +219,17 @@ function dateString(date) {
 
 /* Deletes all comments from the database and refreshes the page. */
 async function deleteAllComments() {
-    await fetch(new Request("/delete-data", {method: "POST"}));
-    getAndRefreshComments();
+  await fetch(new Request("/delete-data", {method: "POST"}));
+  getAndRefreshComments();
+}
+
+/* Deletes an individual comment from the database and refreshes the page. */
+async function deleteComment(i) {
+  const id = js[i].key.id;
+
+  // do this so visual feedback is instantaneous
+  document.getElementsByClassName("comment")[i - (pg-1)*numElemsPerPage].style.display = "none";
+
+  await fetch("/delete-data?id=" + id);
+  getAndRefreshComments();
 }

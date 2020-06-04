@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -28,6 +30,16 @@ public class DeleteServlet extends HttpServlet {
   }
 
   @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    if(request.getParameter("id") != null) {
+      long id = Long.parseLong(request.getParameter("id"));
+      Key key = KeyFactory.createKey("Comment", id);
+      datastore.delete(key);
+    }
+  }
+
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -39,7 +51,7 @@ public class DeleteServlet extends HttpServlet {
     }
 
     for(Key k: keys) {
-        datastore.delete(k);
+      datastore.delete(k);
     }
 
     response.sendRedirect("/index.html");

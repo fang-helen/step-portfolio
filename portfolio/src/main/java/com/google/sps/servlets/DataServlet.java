@@ -50,6 +50,9 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    // querying datastore elements
     String paramLimit = request.getParameter("limit");
     String paramSort = request.getParameter("sort");
     String paramChoice = request.getParameter("sortBy");
@@ -70,6 +73,7 @@ public class DataServlet extends HttpServlet {
       sortParam = paramChoice;
     }
     // todo: only recompute if new parameters don't match old ones. else save json string?
+
     Query query = new Query("Comment");
     if(descending) {
       query.addSort(sortParam, SortDirection.DESCENDING);
@@ -77,7 +81,6 @@ public class DataServlet extends HttpServlet {
       query.addSort(sortParam, SortDirection.ASCENDING);
     }
     
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     database = new ArrayList<>();
