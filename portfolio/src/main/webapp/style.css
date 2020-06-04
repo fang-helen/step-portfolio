@@ -334,7 +334,14 @@ select, select option {
   font-size: 12px;
   vertical-align: middle;
   line-height: 1;
-  width: 20px;
+  width: 15px;
+}
+
+.comment-author {
+  font-size: 12px;
+  vertical-align: middle;
+  line-height: 1;
+  padding-left: 10px;
 }
 
 #comment-nav {
