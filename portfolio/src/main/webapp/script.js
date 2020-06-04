@@ -31,19 +31,19 @@ var pg = 1;
  * If the window is narrow, displayes items in a single column instead of side-by-side.
  */
 function loadLayout() {
-  if (window.innerWidth < 1000) {
-    var body = document.getElementById("body");
-    body.style.display = "block";
+//   if (window.innerWidth < 1000) {
+//     var body = document.getElementById("body");
+//     body.style.display = "block";
 
-    var left = document.getElementById("content-left");
-    left.style.margin = "auto";
-    left.style.padding = "0";
+//     var left = document.getElementById("content-left");
+//     left.style.margin = "auto";
+//     left.style.padding = "0";
 
-    var right = document.getElementById("content-right");
-    right.style.border = "none";
-    right.style.margin = "auto";
-    right.style.padding = "0";
-  }
+//     var right = document.getElementById("content-right");
+//     right.style.border = "none";
+//     right.style.margin = "auto";
+//     right.style.padding = "0";
+//   }
 
   document.getElementById("sort-dir").value = sortDir;
   document.getElementById("limit").value = totalElems;
@@ -95,7 +95,7 @@ async function getAndRefreshComments() {
   refreshComments();  
 }
 
-/* Updates the comment display based on user input. */
+/* Updates the comment display based on user input and saves settings to cookies. */
 function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
@@ -112,6 +112,10 @@ function commentConfig() {
   sortDir = newSort;
   totalElems = newTotal;
   numElemsPerPage = newElemsPerPage;
+
+  document.cookie = "sortDir=" + newSort;
+  document.cookie = "totalElems=" + newTotal;
+  document.cookie = "numElemsPerPage=" + numElemsPerPage;
 
   if(needGet) {
     getAndRefreshComments();
