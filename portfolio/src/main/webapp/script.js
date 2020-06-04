@@ -144,14 +144,22 @@ function refreshComments() {
     pg = 1;
   }
 
+  const pageCount = document.getElementById("page-count");
   const target = document.getElementById("comment-list");
   target.textContent = "";
-  for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems; i++) {
-    target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
-  }
-  const pageCount = document.getElementById("page-count");
-  pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElems);
 
+  if(js.length == 0 || totalElems == 0) {
+    const p = document.createElement("p");
+    p.innerText = "No comments to see!";
+    target.appendChild(p);
+    pageCount.innerHTML = "/";
+  } else {  
+    for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems; i++) {
+      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
+    }
+    pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElems);
+  }
+  
   var icon = document.getElementById("plus-comment");
   var text = document.getElementById("comment-wrapper");
   var textContent = document.getElementById("comment-box");
