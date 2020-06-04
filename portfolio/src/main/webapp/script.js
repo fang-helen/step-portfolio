@@ -275,6 +275,7 @@ async function deleteComment(i) {
   getAndRefreshComments();
 }
 
+/* Increments or decrements the upvote count of a comment */
 async function vote(i, amount) {
   var upvotes = js[i].propertyMap.upvotes;
   upvotes += amount;
