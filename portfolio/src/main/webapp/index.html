@@ -6,7 +6,7 @@
     <link rel = "stylesheet" href = "style.css">
     <script src = "script.js"></script>
   </head>
-  <body id = "body" class = "base" onload = "loadLayout(); getAndRefreshComments()">
+  <body id = "body" class = "base" onload = "load()">
     <div class = "content-left">
       <h1>Hello!</h1>
       <img src = "images/pfp.jpg" id = "pfp" alt = "a picture of me!"/>
@@ -26,7 +26,6 @@
           <textarea name = "enter-text" placeholder = "Leave a comment!"></textarea>
           <button id = "submit" class = "accent2" type = "submit">⇾</button>
         </form>
-        <button onclick = "deleteAllComments()">DELETE COMMENTS</button>
       </div>
     </div>
     <div class = "content-right">
@@ -128,15 +127,19 @@
         <div class = "dropdown-text" id = "comment-wrapper">
           <div class = "dropdown-text-content" id = "comment-box">
             <div id = "comment-settings">
-              <span>Load only </span>
-              <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
-              <span> comments and </span>
-              <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
-              <span> per page  |  Sort: </span>
-              <select name = "sort" id = "sort-dir">
-                <option value = "descending">Newest first</option>
-                <option value = "ascending">Oldest first</option>
-              </select>
+                <div id = "comment-options">
+                <span>Load only </span>
+                <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
+                <span> comments and </span>
+                <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
+                <span> per page  |  Sort: </span>
+                <select name = "sort" id = "sort-dir">
+                  <option value = "descending">Newest first</option>
+                  <option value = "ascending">Oldest first</option>
+                </select>
+                <span> | Filter by author: </span>
+                <input type = "text" id = "find-author" name = "find-author" class = "input-text" placeholder = "search...">
+              </div>
               <button id = "ok-settings" onclick = "commentConfig()" class = "accent2">OK</button>
             </div>
             <div id = "comment-list">
@@ -147,6 +150,7 @@
               <span id = "page-count">/</span>
               <button id = "right-b" class = "nav-b accent1" onclick = "pageUp()">→</button>
             </div>
+            <button onclick = "deleteAllComments()" id = "delete-all">DELETE ALL COMMENTS</button>
           </div>
         </div>
       </div>

@@ -27,27 +27,15 @@ var pg = 1;
 
 
 /**
- * Adjusts layout of page at load time based on window size.
- * If the window is narrow, displayes items in a single column instead of side-by-side.
+ * Loads page based on comment settings from cookies and loads the comments.
+ *
  */
-function loadLayout() {
-  if (window.innerWidth < 1000) {
-    var body = document.getElementById("body");
-    body.style.display = "block";
-
-    var left = document.getElementById("content-left");
-    left.style.margin = "auto";
-    left.style.padding = "0";
-
-    var right = document.getElementById("content-right");
-    right.style.border = "none";
-    right.style.margin = "auto";
-    right.style.padding = "0";
-  }
-
+function load() {
   document.getElementById("sort-dir").value = sortDir;
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
+
+  getAndRefreshComments();
 }
 
 /**
@@ -95,7 +83,7 @@ async function getAndRefreshComments() {
   refreshComments();  
 }
 
-/* Updates the comment display based on user input. */
+/* Updates the comment display based on user input and saves settings to cookies. */
 function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
@@ -112,6 +100,10 @@ function commentConfig() {
   sortDir = newSort;
   totalElems = newTotal;
   numElemsPerPage = newElemsPerPage;
+
+  document.cookie = "sortDir=" + newSort;
+  document.cookie = "totalElems=" + newTotal;
+  document.cookie = "numElemsPerPage=" + numElemsPerPage;
 
   if(needGet) {
     getAndRefreshComments();
@@ -155,7 +147,7 @@ function refreshComments() {
     pageCount.innerHTML = "/";
   } else {  
     for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
-      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
+      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, js[i].propertyMap.upvotes, i));
     }
     pageCount.innerHTML = pg + "/" + maxPage;
   }
@@ -178,12 +170,18 @@ function computeMaxPage() {
  * 
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
+ * @param {number} upvotes The upvote count of the comment.
+ * @param {number} i The index of the comment in the js array.
  */
-function createElement(text, millis, i) {
+function createElement(text, millis, upvotes, i) {
   const date = new Date(millis);
 
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
+
+  // build box containing comment text and timestamp
+  const box = document.createElement("div");
+  box.className = "comment-box";
 
   const textWrapper = document.createElement("div");
   textWrapper.className = "comment-text";
@@ -200,10 +198,45 @@ function createElement(text, millis, i) {
   trash.onclick = function() {
     deleteComment(i);
   };
+
+  box.appendChild(textWrapper);
+  box.appendChild(timeWrapper);
+  box.appendChild(trash);
+
+  // build box containing upvote info
+  const upDownBox = document.createElement("div");
+  upDownBox.className = "upvote-downvote";
   
-  wrapper.appendChild(textWrapper);
-  wrapper.appendChild(timeWrapper);
-  wrapper.appendChild(trash);
+  const up = document.createElement("div");
+  up.className = "up";
+  up.innerText = "+";
+  up.onclick = function() {
+      vote(i, 1);
+  }
+
+  const upCounter = document.createElement("div");
+  upCounter.className = "up-counter";
+  var count = upvotes;
+  if(upvotes > 0) {
+    count = "+" + upvotes;
+  } else if (upvotes == 0) {
+    count = "";
+  }
+  upCounter.innerText = count;
+
+  const down = document.createElement("div");
+  down.className = "down";
+  down.innerText = "-";
+  down.onclick = function() {
+      vote(i, -1);
+  }
+
+  upDownBox.appendChild(up);
+  upDownBox.appendChild(upCounter);
+  upDownBox.appendChild(down);
+  
+  wrapper.appendChild(box);
+  wrapper.appendChild(upDownBox);
   return wrapper;
 }
 
@@ -231,5 +264,24 @@ async function deleteComment(i) {
   document.getElementsByClassName("comment")[i - (pg-1)*numElemsPerPage].style.display = "none";
 
   await fetch("/delete-data?id=" + id);
+  getAndRefreshComments();
+}
+
+/* Increments or decrements the upvote count of a comment */
+async function vote(i, amount) {
+  var upvotes = js[i].propertyMap.upvotes;
+  upvotes += amount;
+  const id = js[i].key.id;
+
+  var countText = upvotes;
+  if(upvotes > 0) {
+    countText = "+" + upvotes;
+  } else if (upvotes == 0) {
+    countText = "";
+  }
+  // do this so visual feedback is instantaneous
+  document.getElementsByClassName("up-counter")[i - (pg-1)*numElemsPerPage].innerText = countText;
+
+  const response = await fetch("/upvote-data?id=" + id + "&vote=" + upvotes);
   getAndRefreshComments();
 }

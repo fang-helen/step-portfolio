@@ -245,6 +245,21 @@ select, select option {
   text-align: center;
 }
 
+#comment-settings {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+#comment-options {
+  width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#comment-options:hover {
+  overflow: scroll;
+}
+
 #ok-settings {
   font-size: 20px;
   text-align: center;
@@ -259,9 +274,17 @@ select, select option {
 
 .comment {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
+  margin: 0;
   margin-bottom: 10px;
+  padding: 0;
+}
+
+.comment-box {
+  display: flex;
+  flex-flow: row nowrap;
   text-align: left;
+  width: 100%;
 }
 
 .comment-text {
@@ -285,6 +308,35 @@ select, select option {
   cursor: pointer;
 }
 
+.upvote-downvote {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.up, .down {
+  margin: 0 10px 0 10px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.up {
+  color: #95f0e5
+}
+
+.down {
+  color: #e3a6a6;
+}
+
+.up-counter {
+  font-size: 12px;
+  vertical-align: middle;
+  line-height: 1;
+  width: 20px;
+}
+
 #comment-nav {
   width: 100%;
 }
@@ -295,4 +347,9 @@ select, select option {
 
 #page-count {
   font-size: 16px;
+}
+
+#delete-all {
+  color: #f7f7f7;
+  margin-top: 30px;
 }
