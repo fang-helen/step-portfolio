@@ -333,3 +333,8 @@ select, select option {
 #page-count {
   font-size: 16px;
 }
+
+#delete-all {
+  color: #f7f7f7;
+  margin-top: 30px;
+}
