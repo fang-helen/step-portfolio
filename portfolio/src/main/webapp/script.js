@@ -219,7 +219,6 @@ function dateString(date) {
 
 /* Deletes all comments from the database and refreshes the page. */
 async function deleteAllComments() {
-
   await fetch(new Request("/delete-data", {method: "POST"}));
   getAndRefreshComments();
 }
