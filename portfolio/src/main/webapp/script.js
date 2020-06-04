@@ -178,6 +178,7 @@ function computeMaxPage() {
  * 
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
+ * @param {number} i The index of the comment in the js array.
  */
 function createElement(text, millis, i) {
   const date = new Date(millis);
