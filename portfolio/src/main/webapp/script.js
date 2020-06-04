@@ -186,6 +186,10 @@ function createElement(text, millis, i) {
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
 
+  // build box containing comment text and timestamp
+  const box = document.createElement("div");
+  box.className = "comment-box";
+
   const textWrapper = document.createElement("div");
   textWrapper.className = "comment-text";
   textWrapper.innerText = text;
@@ -201,10 +205,39 @@ function createElement(text, millis, i) {
   trash.onclick = function() {
     deleteComment(i);
   };
+
+  box.appendChild(textWrapper);
+  box.appendChild(timeWrapper);
+  box.appendChild(trash);
+
+  // build box containing upvote info
+  const upDownBox = document.createElement("div");
+  upDownBox.className = "upvote-downvote";
   
-  wrapper.appendChild(textWrapper);
-  wrapper.appendChild(timeWrapper);
-  wrapper.appendChild(trash);
+  const up = document.createElement("div");
+  up.className = "up";
+  up.innerText = "+";
+  up.onclick = function() {
+      vote(i, 1);
+  }
+
+  const upCounter = document.createElement("div");
+  upCounter.className = "up-counter";
+  upCounter.innerText = "0";
+
+  const down = document.createElement("div");
+  down.className = "down";
+  down.innerText = "-";
+  down.onclick = function() {
+      vote(i, -1);
+  }
+
+  upDownBox.appendChild(up);
+  upDownBox.appendChild(upCounter);
+  upDownBox.appendChild(down);
+  
+  wrapper.appendChild(box);
+  wrapper.appendChild(upDownBox);
   return wrapper;
 }
 
@@ -233,4 +266,8 @@ async function deleteComment(i) {
 
   await fetch("/delete-data?id=" + id);
   getAndRefreshComments();
+}
+
+async function vote(i, amount) {
+
 }
