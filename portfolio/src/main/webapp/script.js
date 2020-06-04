@@ -27,27 +27,15 @@ var pg = 1;
 
 
 /**
- * Adjusts layout of page at load time based on window size.
- * If the window is narrow, displayes items in a single column instead of side-by-side.
+ * Loads page based on comment settings from cookies and loads the comments.
+ *
  */
-function loadLayout() {
-//   if (window.innerWidth < 1000) {
-//     var body = document.getElementById("body");
-//     body.style.display = "block";
-
-//     var left = document.getElementById("content-left");
-//     left.style.margin = "auto";
-//     left.style.padding = "0";
-
-//     var right = document.getElementById("content-right");
-//     right.style.border = "none";
-//     right.style.margin = "auto";
-//     right.style.padding = "0";
-//   }
-
+function load() {
   document.getElementById("sort-dir").value = sortDir;
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
+
+  getAndRefreshComments();
 }
 
 /**
