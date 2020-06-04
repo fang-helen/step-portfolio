@@ -70,7 +70,6 @@ public class DataServlet extends HttpServlet {
       sortParam = paramChoice;
     }
     // todo: only recompute if new parameters don't match old ones. else save json string?
-
     Query query = new Query("Comment");
     if(descending) {
       query.addSort(sortParam, SortDirection.DESCENDING);

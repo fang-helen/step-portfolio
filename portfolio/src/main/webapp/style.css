@@ -49,6 +49,12 @@ h1 {
   color: #f7f7f7;
 }
 
+button {
+  cursor: pointer;
+  background-color: transparent;
+  border-style: none;
+}
+
 /* Intro-Area */
 
 .link-link {
@@ -82,32 +88,29 @@ a:link, a:visited {
 }
 
 form {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 10% 20px 10%;
-    width: 80%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10% 20px 10%;
+  width: 80%;
 }
 
 textarea {
-    border-style: none;
-    color: #f7f7f7;
-    display: inline-block;
-    font-size: 16px;
-    font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
-    background-color: transparent;
-    height: 60px;
-    width: 90%;
-    margin-right: 10px;
-    flex: 1 1 auto;
+  border-style: none;
+  color: #f7f7f7;
+  display: inline-block;
+  font-size: 16px;
+  font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
+  background-color: transparent;
+  height: 60px;
+  width: 90%;
+  margin-right: 10px;
+  flex: 1 1 auto;
 }
 
  #submit {
     font-size: 45px;
-    background-color: transparent;
-    border-style: none;
-    cursor: pointer;
     flex: 0 0 auto;
     top: 30%;
  }
@@ -175,7 +178,7 @@ textarea {
 }
 
 .dropdown-text-content {
-    margin: 0 10% 0 10%;
+  margin: 0 10% 0 10%;
 }
 
 #greeting-container {
@@ -223,26 +226,48 @@ ul {
 /* Comments */
 
 #comment-box {
-    margin-top: 30px;
+  font-size: 16px;
+  margin-top: 30px;
+}
+
+.input-number {
+  background-color: transparent;
+  border: none;
+  color: #f7f7f7;
+  text-align: center;
+  width: 35px;
+}
+
+select, select option {
+  background: transparent;
+  border: none;
+  color: #f7f7f7;
+  text-align: center;
+}
+
+#ok-settings {
+  font-size: 20px;
+  text-align: center;
+  width: 60px;
 }
 
 #comment-list {
-    margin-top: 35px;
-    max-height: 500px;
-    overflow: scroll;
+  margin-top: 35px;
+  max-height: 500px;
+  overflow: scroll;
 }
 
 .comment {
-    display: flex;
-    flex-flow: row nowrap;
-    margin-bottom: 10px;
-    text-align: left;
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 10px;
+  text-align: left;
 }
 
 .comment-text {
-    font-size: 16px;
-    flex: 1 1 auto;
-    width: 70%;
+  font-size: 16px;
+  flex: 1 1 auto;
+  width: 70%;
 }
 
 .comment-time {
@@ -258,11 +283,8 @@ ul {
 
 .nav-b {
   font-size: 35px;
-  cursor: pointer;
-  background-color: transparent;
-  border-style: none;
 }
 
 #page-count {
-    font-size: 16px;
+  font-size: 16px;
 }
