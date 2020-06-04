@@ -26,10 +26,7 @@ var totalElems = 15;
 var pg = 1;
 
 
-/**
- * Loads page based on comment settings from cookies and loads the comments.
- *
- */
+/* Loads page based on comment settings from cookies and loads the comments. */
 function load() {
   document.getElementById("sort-dir").value = sortDir;
   document.getElementById("limit").value = totalElems;
@@ -38,9 +35,7 @@ function load() {
   getAndRefreshComments();
 }
 
-/**
- * Adds a random fact to the page.
- */
+/* Adds a random fact to the page. */
 function addRandomGreeting() {
   const greetings = [
       'I speak fluent Mandarin and some Spanish.',
@@ -231,9 +226,14 @@ function createElement(text, millis, upvotes, i) {
       vote(i, -1);
   }
 
+  const author = document.createElement("div");
+  author.className = "comment-author";
+  author.innerText = "Author: " + "test"; // FIX LATER
+
   upDownBox.appendChild(up);
   upDownBox.appendChild(upCounter);
   upDownBox.appendChild(down);
+  upDownBox.appendChild(author);
   
   wrapper.appendChild(box);
   wrapper.appendChild(upDownBox);
