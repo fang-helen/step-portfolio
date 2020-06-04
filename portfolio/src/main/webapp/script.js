@@ -19,7 +19,7 @@ var js = "";
 // current sort direction
 var sortDir = "descending";
 // num comments per pages
-var numElems = 5;
+var numElemsPerPage = 5;
 // total comments shown on page
 var totalElems = 15;
 // current page number
@@ -28,7 +28,7 @@ var pg = 1;
 
 /**
  * Adjusts layout of page at load time based on window size.
- * If the window is narrow, displayes items in a single column instead of side-by-side
+ * If the window is narrow, displayes items in a single column instead of side-by-side.
  */
 function loadLayout() {
   if (window.innerWidth < 1000) {
@@ -47,7 +47,7 @@ function loadLayout() {
 
   document.getElementById("sort-dir").value = sortDir;
   document.getElementById("limit").value = totalElems;
-  document.getElementById("pg-limit").value = numElems;
+  document.getElementById("pg-limit").value = numElemsPerPage;
 }
 
 /**
@@ -88,47 +88,47 @@ function rotateItem(index) {
   }
 }
 
-/* fetches conmment data from servlet */
-async function getComments() {
+/* Fetches comment data from the servlet and refreshes the comment box content. */
+async function getAndRefreshComments() {
   const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
   js = await response.json();
   refreshComments();  
 }
 
-/* Update comment view options */
+/* Updates the comment display based on user input. */
 function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
-  var newElems = parseInt(document.getElementById("pg-limit").value);
+  var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
   var newTotal = parseInt(document.getElementById("limit").value);
   var needGet = false;
   var needRefresh = false;
 
   if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length) {
     needGet = true;
-  } else if (newTotal < totalElems || numElems != newElems) {
+  } else if (newTotal < totalElems || numElemsPerPage != newElemsPerPage) {
     needRefresh = true;
   }
 
   sortDir = newSort;
   totalElems = newTotal;
-  numElems = newElems;
+  numElemsPerPage = newElemsPerPage;
 
   if(needGet) {
-    getComments();
+    getAndRefreshComments();
   } else if (needRefresh) {
     refreshComments();
   }
 }
  
-/* increment comments page number */
+/* Increments the comment page number and refreshes the page. */
 function pageUp() {
-  if(pg < Math.ceil(Math.min(js.length, totalElems)/numElems)) {
+  if(pg < computeMaxPage()) {
     pg ++;
     refreshComments();
   }
 }
 
-/* decrement comments page number */
+/* Decrements the comment page number and refreshes the page. */
 function pageDown() {
   if(pg > 1) {
     pg --;
@@ -136,10 +136,11 @@ function pageDown() {
   }
 }
 
-/* refreshes the comment display div based on updated settings */
+/* Refreshes the comment display div using the corresponding global variables. */
 function refreshComments() {
-  if(pg > Math.ceil(Math.min(js.length, totalElems)/numElems)) {
-    Math.ceil(Math.min(js.length, totalElems)/numElems);
+  var maxPage = computeMaxPage();
+  if(pg > maxPage) {
+    pg = maxPage;
   } else if (pg < 1) {
     pg = 1;
   }
@@ -168,10 +169,18 @@ function refreshComments() {
   }
 }
 
-/* creates a <div> element to hold comment info and returns it */
-function createElement(text, millis, i) {
-  const date = new Date(millis);
+/* Computes and returns the maximum page number. */
+function computeMaxPage() {
+  return Math.ceil(Math.min(js.length, totalElems)/numElemsPerPage);
+}
 
+/** 
+ * Creates a <div> element for an individual comment and returns it. 
+ * 
+ * @param {string} text The text content of the comment.
+ * @param {number} millis The timestamp, in milliseconds, of the comment.
+ */
+function createElement(text, millis) {
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
 
@@ -181,6 +190,7 @@ function createElement(text, millis, i) {
 
   const timeWrapper = document.createElement("div");
   timeWrapper.className = "comment-time";
+  const date = new Date(millis);
   timeWrapper.innerText = dateString(date);
 
   const trash = document.createElement("img");
@@ -197,7 +207,7 @@ function createElement(text, millis, i) {
   return wrapper;
 }
 
-/* condensed toString of Date information */
+/* Returns a condensed toString of Date information. */
 function dateString(date) {
   const year = date.getFullYear();
   const month = months[date.getMonth()];
@@ -207,9 +217,11 @@ function dateString(date) {
   return hour + ":" + min + "   " + month + " " + day + ", " + year;
 }
 
+/* Deletes all comments from the database and refreshes the page. */
 async function deleteAllComments() {
+
   await fetch(new Request("/delete-data", {method: "POST"}));
-  getComments();
+  getAndRefreshComments();
 }
 
 async function deleteComment(i) {
