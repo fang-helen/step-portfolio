@@ -144,7 +144,6 @@ function refreshComments() {
   } else if (pg < 1) {
     pg = 1;
   }
-
   const pageCount = document.getElementById("page-count");
   const target = document.getElementById("comment-list");
   target.textContent = "";
@@ -155,10 +154,10 @@ function refreshComments() {
     target.appendChild(p);
     pageCount.innerHTML = "/";
   } else {  
-    for(var i = (pg-1)*numElems; i < Math.min(js.length, totalElems) && i < pg*numElems; i++) {
+    for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
       target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, i));
     }
-    pageCount.innerHTML = pg + "/" + Math.ceil(Math.min(js.length, totalElems)/numElems);
+    pageCount.innerHTML = pg + "/" + maxPage;
   }
   
   var icon = document.getElementById("plus-comment");
@@ -180,7 +179,9 @@ function computeMaxPage() {
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
  */
-function createElement(text, millis) {
+function createElement(text, millis, i) {
+  const date = new Date(millis);
+
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
 
@@ -190,7 +191,6 @@ function createElement(text, millis) {
 
   const timeWrapper = document.createElement("div");
   timeWrapper.className = "comment-time";
-  const date = new Date(millis);
   timeWrapper.innerText = dateString(date);
 
   const trash = document.createElement("img");
@@ -224,12 +224,13 @@ async function deleteAllComments() {
   getAndRefreshComments();
 }
 
+/* Deletes an individual comment from the database and refreshes the page. */
 async function deleteComment(i) {
   const id = js[i].key.id;
 
   // do this so visual feedback is instantaneous
-  document.getElementsByClassName("comment")[i - (pg-1)*numElems].style.display = "none";
+  document.getElementsByClassName("comment")[i - (pg-1)*numElemsPerPage].style.display = "none";
 
   await fetch("/delete-data?id=" + id);
-  getComments();
+  getAndRefreshComments();
 }
