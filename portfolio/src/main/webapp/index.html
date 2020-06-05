@@ -24,8 +24,8 @@
             aspiring software engineer.</p>
         <form action = "/data" method = "POST">
           <div id = "form-container">
-            <textarea name = "enter-text" id = "comment-field" placeholder = "Leave a comment!"></textarea>
             <input type = "text" name = "enter-author" id = "enter-author" placeholder = "Your name (optional)">
+            <textarea name = "enter-text" id = "comment-field" placeholder = "Leave a comment!"></textarea>
           </div>
           <button id = "submit" class = "accent2" type = "submit">⇾</button>
         </form>
@@ -131,17 +131,22 @@
           <div class = "dropdown-text-content" id = "comment-box">
             <div id = "comment-settings">
               <div id = "comment-options">
-                <span>Load only </span>
-                <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
-                <span> comments and </span>
-                <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
-                <span> per page  |  Sort: </span>
-                <select name = "sort" id = "sort-dir">
-                  <option value = "descending">Newest first</option>
-                  <option value = "ascending">Oldest first</option>
-                </select>
-                <span> | Filter by author: </span>
-                <input type = "text" id = "find-author" name = "find-author" class = "input-text" placeholder = "search...">
+                <span>Load only
+                  <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
+                  comments and 
+                  <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
+                  per page</span>
+                <span class = "divider">|</span>
+                <span> Sort:
+                  <select name = "sort" id = "sort-dir">
+                    <option value = "descending">Newest first</option>
+                    <option value = "ascending">Oldest first</option>
+                  </select>
+                </span>
+                <span class = "divider">|</span>
+                <span>Filter by author: 
+                  <input type = "text" id = "find-author" name = "find-author" class = "input-text" placeholder = "Search...">
+                </span>
               </div>
               <button id = "ok-settings" onclick = "commentConfig()" class = "accent2">OK</button>
             </div>

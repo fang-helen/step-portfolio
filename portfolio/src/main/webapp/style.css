@@ -95,8 +95,6 @@ form {
   align-items: center;
   justify-content: center;
   padding: 20px 5% 20px 5%;
-  border: 1px solid;
-  border-radius: 8px;
   width: 80%;
   margin: auto;
 }
@@ -117,15 +115,18 @@ textarea {
   font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
   background-color: transparent;
   height: 60px;
-  margin-bottom: 10px;
 }
 
 #enter-author {
   border-style: none;
   color: #f7f7f7;
+  display: inline-block;
   font-size: 16px;
   font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
+  height: 40px;
   background-color: transparent;
+  margin-bottom: 10px;
+  border-bottom: 1px solid;
 }
 
  #submit {
@@ -224,7 +225,7 @@ textarea {
 }
 
 #pfp {
-  border-radius: 15%;
+  border-radius: 50px;
   max-width: 45%;
   max-height: 55%;
   object-fit: contain;
@@ -246,7 +247,7 @@ ul {
 
 #comment-box {
   font-size: 16px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .input-number {
@@ -257,6 +258,13 @@ ul {
   width: 35px;
 }
 
+.input-text {
+  background-color: transparent;
+  border: none;
+  color: #f7f7f7;
+  margin: 0 3px 0 3px;
+}
+
 select, select option {
   background: transparent;
   border: none;
@@ -264,15 +272,22 @@ select, select option {
   text-align: center;
 }
 
+.divider {
+  margin: 0 5px 0 5px
+}
+
 #comment-settings {
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
 }
 
 #comment-options {
   width: 90%;
   white-space: nowrap;
   overflow: hidden;
+  padding: 10px 0 10px 0;
 }
 
 #comment-options:hover {
@@ -286,7 +301,7 @@ select, select option {
 }
 
 #comment-list {
-  margin-top: 35px;
+  margin-top: 20px;
   max-height: 500px;
   overflow: scroll;
 }
