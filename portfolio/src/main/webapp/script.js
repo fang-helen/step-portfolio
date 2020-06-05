@@ -166,7 +166,15 @@ function refreshComments() {
     pageCount.innerHTML = "/";
   } else {  
     for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
-      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, js[i].propertyMap.upvotes, i));
+      target.appendChild(
+          createElement(
+              js[i].propertyMap.content, 
+              js[i].propertyMap.timestamp, 
+              js[i].propertyMap.upvotes, 
+              js[i].propertyMap.author, 
+              i
+          )
+        );
     }
     pageCount.innerHTML = pg + "/" + maxPage;
   }
@@ -192,7 +200,7 @@ function computeMaxPage() {
  * @param {number} upvotes The upvote count of the comment.
  * @param {number} i The index of the comment in the js array.
  */
-function createElement(text, millis, upvotes, i) {
+function createElement(text, millis, upvotes, author, i) {
   const date = new Date(millis);
 
   const wrapper = document.createElement("div");
@@ -250,14 +258,16 @@ function createElement(text, millis, upvotes, i) {
     vote(i, -1);
   }
 
-  const author = document.createElement("div");
-  author.className = "comment-author";
-  author.innerText = "Author: " + "test"; // FIX LATER
+  const authorField = document.createElement("div");
+  authorField.className = "comment-author";
+  if(author != null && author.length > 0) {
+    authorField.innerText = "Author: " + author;
+  }
 
   upDownBox.appendChild(up);
   upDownBox.appendChild(upCounter);
   upDownBox.appendChild(down);
-  upDownBox.appendChild(author);
+  upDownBox.appendChild(authorField);
   
   wrapper.appendChild(box);
   wrapper.appendChild(upDownBox);
@@ -269,8 +279,14 @@ function dateString(date) {
   const year = date.getFullYear();
   const month = months[date.getMonth()];
   const day = date.getDate();
-  const hour = date.getHours();
-  const min = date.getMinutes();
+  var hour = date.getHours();
+  if(hour < 10) {
+    hour = "0" + hour;
+  }
+  var min = date.getMinutes();
+  if(min < 10) {
+    min = "0" + min;
+  }
   return hour + ":" + min + "   " + month + " " + day + ", " + year;
 }
 
