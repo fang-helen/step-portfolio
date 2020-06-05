@@ -102,11 +102,16 @@ public class DataServlet extends HttpServlet {
       response.sendRedirect("/index.html");
       return;
     }
+    String auth = request.getParameter("enter-author");
+    if(auth == null || auth.length() == 0) {
+      auth = "";
+    }
 
     Entity comment = new Entity("Comment");
     comment.setProperty("content", text);
     comment.setProperty("timestamp", System.currentTimeMillis());
     comment.setProperty("upvotes", 0);
+    comment.setProperty("author", auth);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(comment);
