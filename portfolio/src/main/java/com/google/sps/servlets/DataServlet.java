@@ -35,10 +35,14 @@ import java.util.Iterator;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  private List<Entity> database; // used to extract Entities from datastore query
-  private int limit; // upper limit of how many results to return
-  private boolean descending; // sort direction - ascending or descending
-  private String sortParam; // sort criteria
+  // used for json conversion when extracting Entities from datastore query
+  private List<Entity> database; 
+  // upper limit of how many results to return
+  private int limit; 
+  // sort direction - ascending or descending
+  private boolean descending; 
+  // sort criteria
+  private String sortParam; 
 
   @Override
   public void init() {
@@ -56,6 +60,7 @@ public class DataServlet extends HttpServlet {
     String paramLimit = request.getParameter("limit");
     String paramSort = request.getParameter("sort");
     String paramChoice = request.getParameter("sortBy");
+    String auth = request.getParameter("auth");
     if(paramLimit != null) {
       limit = Integer.parseInt(paramLimit);
     }
@@ -72,7 +77,6 @@ public class DataServlet extends HttpServlet {
     if(paramChoice != null) {
       sortParam = paramChoice;
     }
-    // todo: only recompute if new parameters don't match old ones. else save json string?
 
     Query query = new Query("Comment");
     if(descending) {
@@ -85,8 +89,22 @@ public class DataServlet extends HttpServlet {
 
     database = new ArrayList<>();
     Iterator<Entity> itr = results.asIterable().iterator();
-    for(int i = 0; i < limit && itr.hasNext(); i++) {
+    if(auth != null && auth.length() > 0) {
+      // add author filter to search
+      int count = 0;
+      while(count < limit && itr.hasNext()) {
+        Entity entity = itr.next();
+        String eAuth = (String) entity.getProperty("author");
+        eAuth = eAuth.replaceAll("\\s", "").toLowerCase();
+        if(eAuth.equals(auth)) {
+          count ++;
+          database.add(entity);
+        }
+      }
+    } else {
+      for(int i = 0; i < limit && itr.hasNext(); i++) {
         database.add(itr.next());
+      }
     }
 
     response.setContentType("application/json;");

@@ -24,7 +24,8 @@ var numElemsPerPage = 5;
 var totalElems = 15;
 // current page number
 var pg = 1;
-
+// filter by author
+var showingAuthor = "";
 
 /* Loads page based on comment settings from cookies and loads the comments. */
 function load() {
@@ -97,7 +98,11 @@ function rotateItem(index) {
 
 /* Fetches comment data from the servlet and refreshes the comment box content. */
 async function getAndRefreshComments() {
-  const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
+  var url = "/data?limit=" + totalElems + "&sort=" + sortDir;
+  if(showingAuthor.length > 0) {
+    url = url + "&auth=" + showingAuthor;
+  }
+  const response = await fetch(url);
   js = await response.json();
   refreshComments();  
 }
@@ -107,10 +112,17 @@ function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
   var newTotal = parseInt(document.getElementById("limit").value);
+  var findAuthor =  document.getElementById("find-author").value;
   var needGet = false;
   var needRefresh = false;
 
-  if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length) {
+  // filter is not case-sensitive or space-sensitive
+  if(findAuthor != null && findAuthor.length > 0) {
+    findAuthor = findAuthor.replace(/\s/,'').toLowerCase();
+  } else {
+    findAuthor = "";
+  }
+  if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length || findAuthor.localeCompare(showingAuthor) != 0) {
     needGet = true;
   } else if (newTotal < totalElems || numElemsPerPage != newElemsPerPage) {
     needRefresh = true;
@@ -119,6 +131,7 @@ function commentConfig() {
   sortDir = newSort;
   totalElems = newTotal;
   numElemsPerPage = newElemsPerPage;
+  showingAuthor = findAuthor;
 
   document.cookie = "sortDir=" + newSort;
   document.cookie = "totalElems=" + newTotal;
