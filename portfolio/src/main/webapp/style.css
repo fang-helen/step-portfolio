@@ -265,11 +265,16 @@ ul {
   margin: 0 3px 0 3px;
 }
 
-select, select option {
+select {
   background: transparent;
   border: none;
   color: #f7f7f7;
+  font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
   text-align: center;
+}
+
+select option {
+  color: #3f3f44;
 }
 
 .divider {
