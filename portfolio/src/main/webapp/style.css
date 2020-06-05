@@ -129,9 +129,9 @@ textarea {
 }
 
  #submit {
-    font-size: 45px;
-    flex: 0 0 auto;
-    top: 30%;
+  font-size: 45px;
+  flex: 0 0 auto;
+  top: 30%;
  }
 
 /* Dropdowns */
@@ -270,7 +270,7 @@ select, select option {
 }
 
 #comment-options {
-  width: 80%;
+  width: 90%;
   white-space: nowrap;
   overflow: hidden;
 }
