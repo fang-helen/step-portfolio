@@ -296,8 +296,9 @@ select option {
 }
 
 #comment-options:hover {
-  overflow: scroll;
+  overflow-x: scroll;
 }
+
 
 #ok-settings {
   font-size: 20px;
@@ -308,7 +309,12 @@ select option {
 #comment-list {
   margin-top: 20px;
   max-height: 500px;
-  overflow: scroll;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+#comment-list::-webkit-scrollbar {
+  display: none;
 }
 
 .comment {
