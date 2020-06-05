@@ -18,29 +18,52 @@ var js = "";
 
 // current sort direction
 var sortDir = "descending";
+// current sort parameter
+var sortBy = "timestamp";
 // num comments per pages
 var numElemsPerPage = 5;
 // total comments shown on page
 var totalElems = 15;
 // current page number
 var pg = 1;
+// filter by author
+var showingAuthor = "";
 
-
-/**
- * Loads page based on comment settings from cookies and loads the comments.
- *
- */
+/* Loads page based on comment settings from cookies and loads the comments. */
 function load() {
+  parseCookie();
+
   document.getElementById("sort-dir").value = sortDir;
+  document.getElementById("sort-by").value = sortBy;
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
+  document.getElementById("find-author").value = showingAuthor;
 
   getAndRefreshComments();
 }
 
-/**
- * Adds a random fact to the page.
- */
+/* Parses the cookie string to find any saved comment settings. */
+function parseCookie() {
+  const cookie = document.cookie.split("; ")
+  var valsFound = 0;
+  for(var i = 0; i < cookie.length && valsFound < 4; i++) {
+    if(cookie[i].includes("sortDir")) {
+      sortDir = cookie[i].substring(cookie[i].indexOf("=") + 1);
+      valsFound ++;
+    } else if (cookie[i].includes("totalElems")) {
+      totalElems = parseInt(cookie[i].substring(cookie[i].indexOf("=") + 1));
+      valsFound ++;
+    } else if (cookie[i].includes("numElemsPerPage")) {
+      numElemsPerPage = parseInt(cookie[i].substring(cookie[i].indexOf("=") + 1));
+      valsFound ++;
+    } else if (cookie[i].includes("sortBy")) {
+      sortBy = cookie[i].substring(cookie[i].indexOf("=") + 1);
+      valsFound ++;
+    }
+  }
+}
+
+/* Adds a random fact to the page. */
 function addRandomGreeting() {
   const greetings = [
       'I speak fluent Mandarin and some Spanish.',
@@ -78,7 +101,11 @@ function rotateItem(index) {
 
 /* Fetches comment data from the servlet and refreshes the comment box content. */
 async function getAndRefreshComments() {
-  const response = await fetch("/data?limit=" + totalElems + "&sort=" + sortDir);
+  var url = "/data?limit=" + totalElems + "&sort=" + sortDir + "&sortBy=" + sortBy;
+  if(showingAuthor.length > 0) {
+    url = url + "&auth=" + showingAuthor;
+  }
+  const response = await fetch(url);
   js = await response.json();
   refreshComments();  
 }
@@ -86,24 +113,39 @@ async function getAndRefreshComments() {
 /* Updates the comment display based on user input and saves settings to cookies. */
 function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
+  var newSortBy = document.getElementById("sort-by").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
   var newTotal = parseInt(document.getElementById("limit").value);
+  var findAuthor =  document.getElementById("find-author").value;
   var needGet = false;
   var needRefresh = false;
 
-  if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length) {
+  // filter is not case-sensitive or space-sensitive
+  if(findAuthor != null && findAuthor.length > 0) {
+    findAuthor = findAuthor.replace(/\s/,'');
+  } else {
+    findAuthor = "";
+  }
+  if(newSort.localeCompare(sortDir) != 0 
+        || newTotal > js.length 
+        || findAuthor.localeCompare(showingAuthor) != 0
+        || newSortBy.localeCompare(sortBy) != 0
+  ) {
     needGet = true;
   } else if (newTotal < totalElems || numElemsPerPage != newElemsPerPage) {
     needRefresh = true;
   }
 
   sortDir = newSort;
+  sortBy = newSortBy;
   totalElems = newTotal;
   numElemsPerPage = newElemsPerPage;
+  showingAuthor = findAuthor;
 
   document.cookie = "sortDir=" + newSort;
   document.cookie = "totalElems=" + newTotal;
   document.cookie = "numElemsPerPage=" + numElemsPerPage;
+  document.cookie = "sortBy=" + sortBy;
 
   if(needGet) {
     getAndRefreshComments();
@@ -147,7 +189,15 @@ function refreshComments() {
     pageCount.innerHTML = "/";
   } else {  
     for(var i = (pg-1)*numElemsPerPage; i < Math.min(js.length, totalElems) && i < pg*numElemsPerPage; i++) {
-      target.appendChild(createElement(js[i].propertyMap.content, js[i].propertyMap.timestamp, js[i].propertyMap.upvotes, i));
+      target.appendChild(
+          createElement(
+              js[i].propertyMap.content, 
+              js[i].propertyMap.timestamp, 
+              js[i].propertyMap.upvotes, 
+              js[i].propertyMap.author, 
+              i
+          )
+        );
     }
     pageCount.innerHTML = pg + "/" + maxPage;
   }
@@ -173,7 +223,7 @@ function computeMaxPage() {
  * @param {number} upvotes The upvote count of the comment.
  * @param {number} i The index of the comment in the js array.
  */
-function createElement(text, millis, upvotes, i) {
+function createElement(text, millis, upvotes, author, i) {
   const date = new Date(millis);
 
   const wrapper = document.createElement("div");
@@ -211,7 +261,7 @@ function createElement(text, millis, upvotes, i) {
   up.className = "up";
   up.innerText = "+";
   up.onclick = function() {
-      vote(i, 1);
+    vote(i, 1);
   }
 
   const upCounter = document.createElement("div");
@@ -228,12 +278,19 @@ function createElement(text, millis, upvotes, i) {
   down.className = "down";
   down.innerText = "-";
   down.onclick = function() {
-      vote(i, -1);
+    vote(i, -1);
+  }
+
+  const authorField = document.createElement("div");
+  authorField.className = "comment-author";
+  if(author != null && author.length > 0) {
+    authorField.innerText = "Author: " + author;
   }
 
   upDownBox.appendChild(up);
   upDownBox.appendChild(upCounter);
   upDownBox.appendChild(down);
+  upDownBox.appendChild(authorField);
   
   wrapper.appendChild(box);
   wrapper.appendChild(upDownBox);
@@ -245,8 +302,14 @@ function dateString(date) {
   const year = date.getFullYear();
   const month = months[date.getMonth()];
   const day = date.getDate();
-  const hour = date.getHours();
-  const min = date.getMinutes();
+  var hour = date.getHours();
+  if(hour < 10) {
+    hour = "0" + hour;
+  }
+  var min = date.getMinutes();
+  if(min < 10) {
+    min = "0" + min;
+  }
   return hour + ":" + min + "   " + month + " " + day + ", " + year;
 }
 

@@ -22,15 +22,16 @@ h1 {
 }
 
 .content-left {
-  flex: 2 3 50%;
-  padding: 5% 0 5% 0;
+  flex: 1 3 50%;
+  padding: 0;
+  padding-top: 5%;
   text-align: center;
 }
 
 .content-right {
   align-items: center;
   border-left-style: solid;
-  flex: 1 1 50%;
+  flex: 2 1 50%;
   margin: auto;
   padding: 35px;
   text-align: center;
@@ -73,6 +74,7 @@ button {
 #intro {
   font-size: 24px;
   margin: auto;
+  margin-bottom: 0;
   padding: 10px;
   padding-bottom: 0;
   width: 70%;
@@ -92,8 +94,17 @@ form {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  padding: 20px 10% 20px 10%;
+  padding: 20px 5% 20px 5%;
   width: 80%;
+  margin: auto;
+}
+
+#form-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column nowrap;
+  margin-right: 20px;
+  width: 90%;
 }
 
 textarea {
@@ -104,15 +115,24 @@ textarea {
   font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
   background-color: transparent;
   height: 60px;
-  width: 90%;
-  margin-right: 10px;
-  flex: 1 1 auto;
+}
+
+#enter-author {
+  border-style: none;
+  color: #f7f7f7;
+  display: inline-block;
+  font-size: 16px;
+  font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
+  height: 40px;
+  background-color: transparent;
+  margin-bottom: 10px;
+  border-bottom: 1px solid;
 }
 
  #submit {
-    font-size: 45px;
-    flex: 0 0 auto;
-    top: 30%;
+  font-size: 45px;
+  flex: 0 0 auto;
+  top: 30%;
  }
 
 /* Dropdowns */
@@ -205,9 +225,9 @@ textarea {
 }
 
 #pfp {
-  border-radius: 15%;
-  max-width: 50%;
-  max-height: 65%;
+  border-radius: 50px;
+  max-width: 45%;
+  max-height: 55%;
   object-fit: contain;
 }
 
@@ -227,7 +247,7 @@ ul {
 
 #comment-box {
   font-size: 16px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .input-number {
@@ -238,27 +258,47 @@ ul {
   width: 35px;
 }
 
-select, select option {
+.input-text {
+  background-color: transparent;
+  border: none;
+  color: #f7f7f7;
+  margin: 0 3px 0 3px;
+}
+
+select {
   background: transparent;
   border: none;
   color: #f7f7f7;
+  font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
   text-align: center;
+}
+
+select option {
+  color: #3f3f44;
+}
+
+.divider {
+  margin: 0 5px 0 5px;
 }
 
 #comment-settings {
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
 }
 
 #comment-options {
-  width: 80%;
+  width: 90%;
   white-space: nowrap;
   overflow: hidden;
+  padding: 10px 0 10px 0;
 }
 
 #comment-options:hover {
-  overflow: scroll;
+  overflow-x: scroll;
 }
+
 
 #ok-settings {
   font-size: 20px;
@@ -267,9 +307,14 @@ select, select option {
 }
 
 #comment-list {
-  margin-top: 35px;
+  margin-top: 20px;
   max-height: 500px;
-  overflow: scroll;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+#comment-list::-webkit-scrollbar {
+  display: none;
 }
 
 .comment {
@@ -334,7 +379,14 @@ select, select option {
   font-size: 12px;
   vertical-align: middle;
   line-height: 1;
-  width: 20px;
+  width: 15px;
+}
+
+.comment-author {
+  font-size: 12px;
+  vertical-align: middle;
+  line-height: 1;
+  padding-left: 10px;
 }
 
 #comment-nav {

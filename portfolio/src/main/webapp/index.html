@@ -23,7 +23,10 @@
         <p>I am a <span class = "accent2">computer science student</span> at the University of Texas at Austin and 
             aspiring software engineer.</p>
         <form action = "/data" method = "POST">
-          <textarea name = "enter-text" placeholder = "Leave a comment!"></textarea>
+          <div id = "form-container">
+            <input type = "text" name = "enter-author" id = "enter-author" placeholder = "Your name (optional)" maxlength = "35">
+            <textarea name = "enter-text" id = "comment-field" placeholder = "Leave a comment!" maxlength = "3000"></textarea>
+          </div>
           <button id = "submit" class = "accent2" type = "submit">⇾</button>
         </form>
       </div>
@@ -31,8 +34,8 @@
     <div class = "content-right">
       <div class = "dropdown-item">
         <div class = "dropdown" onclick = "rotateItem(0)">
-            <span class = "plus accent2">+</span>
-            <span class = "dropdown-title">About</span>
+          <span class = "plus accent2">+</span>
+          <span class = "dropdown-title">About</span>
         </div>
         <div class = "dropdown-text" id = "about-section">
           <div class = "dropdown-text-content"> 
@@ -127,18 +130,31 @@
         <div class = "dropdown-text" id = "comment-wrapper">
           <div class = "dropdown-text-content" id = "comment-box">
             <div id = "comment-settings">
-                <div id = "comment-options">
-                <span>Load only </span>
-                <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
-                <span> comments and </span>
-                <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
-                <span> per page  |  Sort: </span>
-                <select name = "sort" id = "sort-dir">
-                  <option value = "descending">Newest first</option>
-                  <option value = "ascending">Oldest first</option>
-                </select>
-                <span> | Filter by author: </span>
-                <input type = "text" id = "find-author" name = "find-author" class = "input-text" placeholder = "search...">
+              <div id = "comment-options">
+                <span>Load only
+                  <input type = "number" id = "limit" name = "limit" value = "10" min = "1" max = "1000" class = "input-number">
+                  comments and 
+                  <input type = "number" id = "pg-limit" name = "pg-limit" value = "10" min = "1" max = "1000" class = "input-number">
+                  per page</span>
+                <span class = "divider">|</span>
+                <span> Sort by:
+                  <select name = "sortBy" id = "sort-by">
+                    <option value = "timestamp">Date added</option>
+                    <option value = "upvotes">Upvote score</option>
+                    <option value = "author">Author</option>
+                  </select>
+                </span>
+                <span class = "divider">|</span>
+                <span> Sort:
+                  <select name = "sort" id = "sort-dir">
+                    <option value = "descending">Descending</option>
+                    <option value = "ascending">Ascending</option>
+                  </select>
+                </span>
+                <span class = "divider">|</span>
+                <span>Filter by author: 
+                  <input type = "text" id = "find-author" name = "find-author" class = "input-text" placeholder = "Search...">
+                </span>
               </div>
               <button id = "ok-settings" onclick = "commentConfig()" class = "accent2">OK</button>
             </div>
