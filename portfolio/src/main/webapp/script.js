@@ -37,6 +37,7 @@ function load() {
   document.getElementById("sort-by").value = sortBy;
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
+  document.getElementById("find-author").value = showingAuthor;
 
   getAndRefreshComments();
 }
@@ -121,7 +122,7 @@ function commentConfig() {
 
   // filter is not case-sensitive or space-sensitive
   if(findAuthor != null && findAuthor.length > 0) {
-    findAuthor = findAuthor.replace(/\s/,'').toLowerCase();
+    findAuthor = findAuthor.replace(/\s/,'');
   } else {
     findAuthor = "";
   }
