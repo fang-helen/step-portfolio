@@ -28,11 +28,35 @@ var pg = 1;
 
 /* Loads page based on comment settings from cookies and loads the comments. */
 function load() {
+  parseCookie();
+
   document.getElementById("sort-dir").value = sortDir;
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
 
   getAndRefreshComments();
+}
+
+/* Parses the cookie string to find any saved comment settings. */
+function parseCookie() {
+  const cookie = document.cookie.split("; ")
+  var valsFound = 0;
+  for(var i = 0; i < cookie.length && valsFound < 3; i++) {
+    if(cookie[i].includes("sortDir")) {
+      sortDir = cookie[i].substring(cookie[i].indexOf("=") + 1);
+      valsFound ++;
+    } else if (cookie[i].includes("totalElems")) {
+      totalElems = parseInt(cookie[i].substring(cookie[i].indexOf("=") + 1));
+      valsFound ++;
+    } else if (cookie[i].includes("numElemsPerPage")) {
+      numElemsPerPage = parseInt(cookie[i].substring(cookie[i].indexOf("=") + 1));
+      valsFound ++;
+    }
+  }
+
+  /*
+  JSESSIONID=LPcUSp0NF_SDRwMwQBiV3Q.node0; test=test; sortDir=descending; totalElems=15; numElemsPerPage=5
+  */
 }
 
 /* Adds a random fact to the page. */
@@ -206,7 +230,7 @@ function createElement(text, millis, upvotes, i) {
   up.className = "up";
   up.innerText = "+";
   up.onclick = function() {
-      vote(i, 1);
+    vote(i, 1);
   }
 
   const upCounter = document.createElement("div");
@@ -223,7 +247,7 @@ function createElement(text, millis, upvotes, i) {
   down.className = "down";
   down.innerText = "-";
   down.onclick = function() {
-      vote(i, -1);
+    vote(i, -1);
   }
 
   const author = document.createElement("div");
