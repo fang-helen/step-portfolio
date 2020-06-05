@@ -100,7 +100,7 @@ function rotateItem(index) {
 
 /* Fetches comment data from the servlet and refreshes the comment box content. */
 async function getAndRefreshComments() {
-  var url = "/data?limit=" + totalElems + "&sort=" + sortDir;
+  var url = "/data?limit=" + totalElems + "&sort=" + sortDir + "&sortBy=" + sortBy;
   if(showingAuthor.length > 0) {
     url = url + "&auth=" + showingAuthor;
   }
