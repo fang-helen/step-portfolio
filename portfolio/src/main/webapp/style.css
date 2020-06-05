@@ -94,8 +94,19 @@ form {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  padding: 20px 10% 0 10%;
+  padding: 20px 5% 20px 5%;
+  border: 1px solid;
+  border-radius: 8px;
   width: 80%;
+  margin: auto;
+}
+
+#form-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column nowrap;
+  margin-right: 20px;
+  width: 90%;
 }
 
 textarea {
@@ -106,9 +117,15 @@ textarea {
   font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
   background-color: transparent;
   height: 60px;
-  width: 90%;
-  margin-right: 10px;
-  flex: 1 1 auto;
+  margin-bottom: 10px;
+}
+
+#enter-author {
+  border-style: none;
+  color: #f7f7f7;
+  font-size: 16px;
+  font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
+  background-color: transparent;
 }
 
  #submit {

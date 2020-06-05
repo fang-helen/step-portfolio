@@ -23,7 +23,10 @@
         <p>I am a <span class = "accent2">computer science student</span> at the University of Texas at Austin and 
             aspiring software engineer.</p>
         <form action = "/data" method = "POST">
-          <textarea name = "enter-text" placeholder = "Leave a comment!"></textarea>
+          <div id = "form-container">
+            <textarea name = "enter-text" id = "comment-field" placeholder = "Leave a comment!"></textarea>
+            <input type = "text" name = "enter-author" id = "enter-author" placeholder = "Your name (optional)">
+          </div>
           <button id = "submit" class = "accent2" type = "submit">⇾</button>
         </form>
       </div>
@@ -31,8 +34,8 @@
     <div class = "content-right">
       <div class = "dropdown-item">
         <div class = "dropdown" onclick = "rotateItem(0)">
-            <span class = "plus accent2">+</span>
-            <span class = "dropdown-title">About</span>
+          <span class = "plus accent2">+</span>
+          <span class = "dropdown-title">About</span>
         </div>
         <div class = "dropdown-text" id = "about-section">
           <div class = "dropdown-text-content"> 
