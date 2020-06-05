@@ -54,10 +54,6 @@ function parseCookie() {
       valsFound ++;
     }
   }
-
-  /*
-  JSESSIONID=LPcUSp0NF_SDRwMwQBiV3Q.node0; test=test; sortDir=descending; totalElems=15; numElemsPerPage=5
-  */
 }
 
 /* Adds a random fact to the page. */
