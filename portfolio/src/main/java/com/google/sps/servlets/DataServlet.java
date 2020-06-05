@@ -94,7 +94,7 @@ public class DataServlet extends HttpServlet {
       int count = 0;
       while(count < limit && itr.hasNext()) {
         Entity entity = itr.next();
-        String eAuth = (String) entity.getProperty("author");
+        String eAuth = entity.getProperty("author").toString();
         eAuth = eAuth.replaceAll("\\s", "");
         if(eAuth.equalsIgnoreCase(auth)) {
           count ++;
