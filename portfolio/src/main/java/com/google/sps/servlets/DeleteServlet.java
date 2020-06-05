@@ -21,14 +21,6 @@ import java.util.List;
 @WebServlet("/delete-data")
 public class DeleteServlet extends HttpServlet {
 
-  // used to temporarily hold datastore keys
-  private List<Key> keys;
-    
-  @Override
-  public void init() {
-    keys = new ArrayList<>();
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -45,13 +37,8 @@ public class DeleteServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    keys = new ArrayList<>();
     for(Entity entity:results.asIterable()) {
-      keys.add(entity.getKey());
-    }
-
-    for(Key k: keys) {
-      datastore.delete(k);
+      datastore.delete(entity.getKey());
     }
 
     response.sendRedirect("/index.html");
