@@ -22,15 +22,16 @@ h1 {
 }
 
 .content-left {
-  flex: 2 3 50%;
-  padding: 5% 0 5% 0;
+  flex: 1 3 50%;
+  padding: 0;
+  padding-top: 5%;
   text-align: center;
 }
 
 .content-right {
   align-items: center;
   border-left-style: solid;
-  flex: 1 1 50%;
+  flex: 2 1 50%;
   margin: auto;
   padding: 35px;
   text-align: center;
@@ -73,6 +74,7 @@ button {
 #intro {
   font-size: 24px;
   margin: auto;
+  margin-bottom: 0;
   padding: 10px;
   padding-bottom: 0;
   width: 70%;
@@ -92,7 +94,7 @@ form {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  padding: 20px 10% 20px 10%;
+  padding: 20px 10% 0 10%;
   width: 80%;
 }
 
@@ -206,8 +208,8 @@ textarea {
 
 #pfp {
   border-radius: 15%;
-  max-width: 50%;
-  max-height: 65%;
+  max-width: 45%;
+  max-height: 55%;
   object-fit: contain;
 }
 
