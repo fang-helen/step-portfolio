@@ -18,6 +18,8 @@ var js = "";
 
 // current sort direction
 var sortDir = "descending";
+// current sort parameter
+var sortBy = "timestamp";
 // num comments per pages
 var numElemsPerPage = 5;
 // total comments shown on page
@@ -32,6 +34,7 @@ function load() {
   parseCookie();
 
   document.getElementById("sort-dir").value = sortDir;
+  document.getElementById("sort-by").value = sortBy;
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
 
@@ -42,7 +45,7 @@ function load() {
 function parseCookie() {
   const cookie = document.cookie.split("; ")
   var valsFound = 0;
-  for(var i = 0; i < cookie.length && valsFound < 3; i++) {
+  for(var i = 0; i < cookie.length && valsFound < 4; i++) {
     if(cookie[i].includes("sortDir")) {
       sortDir = cookie[i].substring(cookie[i].indexOf("=") + 1);
       valsFound ++;
@@ -51,6 +54,9 @@ function parseCookie() {
       valsFound ++;
     } else if (cookie[i].includes("numElemsPerPage")) {
       numElemsPerPage = parseInt(cookie[i].substring(cookie[i].indexOf("=") + 1));
+      valsFound ++;
+    } else if (cookie[i].includes("sortBy")) {
+      sortBy = cookie[i].substring(cookie[i].indexOf("=") + 1);
       valsFound ++;
     }
   }
@@ -106,6 +112,7 @@ async function getAndRefreshComments() {
 /* Updates the comment display based on user input and saves settings to cookies. */
 function commentConfig() {
   var newSort = document.getElementById("sort-dir").value;
+  var newSortBy = document.getElementById("sort-by").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
   var newTotal = parseInt(document.getElementById("limit").value);
   var findAuthor =  document.getElementById("find-author").value;
@@ -118,13 +125,18 @@ function commentConfig() {
   } else {
     findAuthor = "";
   }
-  if(newSort.localeCompare(sortDir) != 0 || newTotal > js.length || findAuthor.localeCompare(showingAuthor) != 0) {
+  if(newSort.localeCompare(sortDir) != 0 
+        || newTotal > js.length 
+        || findAuthor.localeCompare(showingAuthor) != 0
+        || newSortBy.localeCompare(sortBy) != 0
+  ) {
     needGet = true;
   } else if (newTotal < totalElems || numElemsPerPage != newElemsPerPage) {
     needRefresh = true;
   }
 
   sortDir = newSort;
+  sortBy = newSortBy;
   totalElems = newTotal;
   numElemsPerPage = newElemsPerPage;
   showingAuthor = findAuthor;
@@ -132,6 +144,7 @@ function commentConfig() {
   document.cookie = "sortDir=" + newSort;
   document.cookie = "totalElems=" + newTotal;
   document.cookie = "numElemsPerPage=" + numElemsPerPage;
+  document.cookie = "sortBy=" + sortBy;
 
   if(needGet) {
     getAndRefreshComments();
