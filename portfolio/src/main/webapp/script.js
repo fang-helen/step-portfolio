@@ -13,8 +13,10 @@
 // limitations under the License.
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-//json "cache" of currently queried comments
+// json "cache" of currently queried comments
 var js = "";
+// json object of logged-in user's information
+var user = "";
 
 // current sort direction
 var sortDir = "descending";
@@ -347,4 +349,17 @@ async function vote(i, amount) {
 
   const response = await fetch("/upvote-data?id=" + id + "&vote=" + upvotes);
   getAndRefreshComments();
+}
+
+async function login() {
+  const response = await fetch("/auth");
+  user = await response.json();
+  document.getElementById("login").href = user.url;
+  if(user.loggedIn) {
+    document.getElementById("login").innerText = "Logout";
+    document.getElementById("user").innerText = user.email;
+  } else {
+    document.getElementById("login").innerText = "Login";
+    document.getElementById("user").innerText = "guest";
+  }
 }
