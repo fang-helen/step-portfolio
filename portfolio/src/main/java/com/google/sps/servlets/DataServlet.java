@@ -97,11 +97,20 @@ public class DataServlet extends HttpServlet {
       int count = 0;
       while(count < limit && itr.hasNext()) {
         Entity entity = itr.next();
-        String eAuth = entity.getProperty("author").toString();
+        // check against nickname first
+        String eAuth = entity.getProperty("name").toString();
         eAuth = eAuth.replaceAll("\\s", "");
         if(eAuth.equalsIgnoreCase(auth)) {
           count ++;
           database.add(entity);
+        } else {
+          // if not a match, also check against email
+          String email = entity.getProperty("author").toString();
+          email = email.replaceAll("\\s", "");
+          if(email.toLowerCase().contains(auth.toLowerCase())) {
+            count ++;
+            database.add(entity);
+          }
         }
       }
     } else {
@@ -119,7 +128,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String text = request.getParameter("enter-text");
+    String text = request.getParameter("enter-text").trim();
     if(text == null || text.length() == 0) {
       response.sendRedirect("/index.html");
       return;
