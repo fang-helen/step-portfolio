@@ -2,6 +2,14 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +37,34 @@ public class AuthServlet extends HttpServlet {
 
     }
     response.getWriter().println(gson.toJson(info));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+    if(!userService.isUserLoggedIn()) {
+      return;
+    }
+
+    String email = userService.getCurrentUser().getEmail();
+    String nickname = request.getParameter("nickname");
+    // update user info in datastore
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Entity userInfo = new Entity("User", email);
+    userInfo.setProperty("name", nickname);
+    userInfo.setProperty("email", email);
+    datastore.put(userInfo);
+
+    // update nickname for all of user's comments
+    Query query =
+        new Query("Comment")
+            .setFilter(new Query.FilterPredicate("author", Query.FilterOperator.EQUAL, email));
+    PreparedQuery results = datastore.prepare(query);
+    for(Entity e: results.asIterable()) {
+      e.setProperty("name", nickname);
+      datastore.put(e);
+    }
+    response.sendRedirect("/index.html");
   }
 
   /* nested class to help with JSON conversion */
