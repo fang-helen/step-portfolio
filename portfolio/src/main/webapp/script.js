@@ -370,6 +370,7 @@ async function login() {
   }
 }
 
+/* updates user nickname and refreshes comments section */
 async function updateNickname() {
   newNickname = document.getElementById("new-nickname").value.trim();
   if(newNickname == null || newNickname.length == 0) {
