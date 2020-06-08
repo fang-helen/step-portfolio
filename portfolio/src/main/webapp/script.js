@@ -118,7 +118,7 @@ function commentConfig() {
   var newSortBy = document.getElementById("sort-by").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
   var newTotal = parseInt(document.getElementById("limit").value);
-  var findAuthor =  document.getElementById("find-author").value;
+  var findAuthor =  document.getElementById("find-author").value.trim();
   var needGet = false;
   var needRefresh = false;
 
@@ -371,13 +371,13 @@ async function login() {
 }
 
 async function updateNickname() {
-  newNickname = document.getElementById("new-nickname").value;
+  newNickname = document.getElementById("new-nickname").value.trim();
   if(newNickname == null || newNickname.length == 0) {
-    newNickname.value = "FAILED";
     return;
   }
   if(!user.loggedIn) {
     login();
   }
-  const response = await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
+  await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
+  getAndRefreshComments();
 }
