@@ -20,23 +20,18 @@ public class AuthServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-    //   String urlToRedirectToAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL("/");
       info = new LoginObject(logoutUrl, userEmail);
 
-    //   response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-    //   response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
     } else {
-    //   String urlToRedirectToAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL("/");
       info = new LoginObject(loginUrl, null);
 
-    //   response.getWriter().println("<p>Hello stranger.</p>");
-    //   response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
     }
     response.getWriter().println(gson.toJson(info));
   }
 
+  /* nested class to help with JSON conversion */
   private static class LoginObject {
     boolean loggedIn;
     String url;
