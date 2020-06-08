@@ -58,7 +58,7 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    // querying datastore elements
+    // update query parameters
     String paramLimit = request.getParameter("limit");
     String paramSort = request.getParameter("sort");
     String paramChoice = request.getParameter("sortBy");
@@ -80,6 +80,7 @@ public class DataServlet extends HttpServlet {
       sortParam = paramChoice;
     }
 
+    // querying datastore elements
     Query query = new Query("Comment");
     if(descending) {
       query.addSort(sortParam, SortDirection.DESCENDING);
@@ -109,6 +110,7 @@ public class DataServlet extends HttpServlet {
       }
     }
 
+    // return as JSON
     response.setContentType("application/json;");
     Gson gson = new Gson();
     String json = gson.toJson(database);
@@ -123,9 +125,26 @@ public class DataServlet extends HttpServlet {
       return;
     }
     UserService userService = UserServiceFactory.getUserService();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
     String auth = "";
+    String name = "";
+    // find user nickname if logged in
     if(userService.isUserLoggedIn()) {
       auth = userService.getCurrentUser().getEmail();
+      Query query =
+        new Query("User")
+            .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, auth));
+      PreparedQuery results = datastore.prepare(query);
+      Entity entity = results.asSingleEntity();
+      if (entity != null) {
+        name = entity.getProperty("name").toString();
+      } else {
+        name = auth;
+        Entity newUser = new Entity("User", auth);
+        newUser.setProperty("name", name);
+        datastore.put(newUser);
+      }
     }
 
     Entity comment = new Entity("Comment");
@@ -133,8 +152,8 @@ public class DataServlet extends HttpServlet {
     comment.setProperty("timestamp", System.currentTimeMillis());
     comment.setProperty("upvotes", 0);
     comment.setProperty("author", auth);
+    comment.setProperty("name", name);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(comment);
 
     response.sendRedirect("/index.html");
