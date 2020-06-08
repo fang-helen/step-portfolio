@@ -130,6 +130,16 @@ form {
   width: 90%;
 }
 
+#comment-user {
+  display: inline-block;
+  font-size: 16px;
+  height: 30px;
+  background-color: transparent;
+  margin-bottom: 10px;
+  text-align: left;
+  border-bottom: 1px solid;
+}
+
 textarea {
   border-style: none;
   color: #f7f7f7;
@@ -138,18 +148,6 @@ textarea {
   font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
   background-color: transparent;
   height: 60px;
-}
-
-#enter-author {
-  border-style: none;
-  color: #f7f7f7;
-  display: inline-block;
-  font-size: 16px;
-  font-family: "Barlow", "Trebuchet MS", Helvetica, sans-serif;
-  height: 40px;
-  background-color: transparent;
-  margin-bottom: 10px;
-  border-bottom: 1px solid;
 }
 
  #submit {

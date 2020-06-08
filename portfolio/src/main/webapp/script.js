@@ -223,6 +223,7 @@ function computeMaxPage() {
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
  * @param {number} upvotes The upvote count of the comment.
+ * @param {string} author The original comment author.
  * @param {number} i The index of the comment in the js array.
  */
 function createElement(text, millis, upvotes, author, i) {
@@ -243,6 +244,9 @@ function createElement(text, millis, upvotes, author, i) {
   timeWrapper.className = "comment-time";
   timeWrapper.innerText = dateString(date);
 
+  box.appendChild(textWrapper);
+  box.appendChild(timeWrapper);
+
   const trash = document.createElement("img");
   trash.className = "trash";
   trash.alt = "Delete";
@@ -250,9 +254,6 @@ function createElement(text, millis, upvotes, author, i) {
   trash.onclick = function() {
     deleteComment(i);
   };
-
-  box.appendChild(textWrapper);
-  box.appendChild(timeWrapper);
   box.appendChild(trash);
 
   // build box containing upvote info
@@ -360,8 +361,10 @@ async function login() {
   if(user.loggedIn) {
     document.getElementById("login").innerText = "Logout";
     document.getElementById("user").innerText = user.email;
+    document.getElementById("comment-user").innerText = user.email;
   } else {
     document.getElementById("login").innerText = "Login";
     document.getElementById("user").innerText = "guest";
+    document.getElementById("comment-user").innerText = "Guest";
   }
 }
