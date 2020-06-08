@@ -24,6 +24,13 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Formatter;
+import java.util.logging.SimpleFormatter;
+
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,6 +52,8 @@ public class DataServlet extends HttpServlet {
   private boolean descending; 
   // sort criteria
   private String sortParam; 
+
+  private static final Logger LOGGER = Logger.getLogger(DataServlet.class.getName());
 
   @Override
   public void init() {
@@ -73,6 +82,7 @@ public class DataServlet extends HttpServlet {
       else if (paramSort.equals("ascending")) {
         descending = false;
       } else {
+        LOGGER.warning("invalid parameter sort direction");
         throw new IOException("invalid sort direction");
       }
     }
@@ -123,6 +133,8 @@ public class DataServlet extends HttpServlet {
     response.setContentType("application/json;");
     Gson gson = new Gson();
     String json = gson.toJson(database);
+
+    LOGGER.info("queried database for " + limit + " results, sorted by " + paramChoice + " in " + paramSort + " order and author matches " + auth);
     response.getWriter().println(json);
   }
 
@@ -165,6 +177,7 @@ public class DataServlet extends HttpServlet {
 
     datastore.put(comment);
 
+    LOGGER.info("added comment " + text);
     response.sendRedirect("/index.html");
   }
 }

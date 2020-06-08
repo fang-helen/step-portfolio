@@ -14,12 +14,16 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/delete-data")
 public class DeleteServlet extends HttpServlet {
+
+  private static final Logger LOGGER = Logger.getLogger(DataServlet.class.getName());
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -28,6 +32,9 @@ public class DeleteServlet extends HttpServlet {
       long id = Long.parseLong(request.getParameter("id"));
       Key key = KeyFactory.createKey("Comment", id);
       datastore.delete(key);
+      LOGGER.info("deleted comment with id " + id);
+    } else {
+      LOGGER.info("id parameter is null, do nothing");
     }
   }
 
@@ -40,6 +47,8 @@ public class DeleteServlet extends HttpServlet {
     for(Entity entity:results.asIterable()) {
       datastore.delete(entity.getKey());
     }
+
+    LOGGER.info("deleted all comments from the database");
 
     response.sendRedirect("/index.html");
   }

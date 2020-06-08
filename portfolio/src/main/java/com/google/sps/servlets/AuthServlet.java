@@ -7,8 +7,8 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +19,9 @@ import com.google.gson.Gson;
 
 @WebServlet("/auth")
 public class AuthServlet extends HttpServlet {
+
+  private static final Logger LOGGER = Logger.getLogger(DataServlet.class.getName());
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
@@ -30,11 +33,11 @@ public class AuthServlet extends HttpServlet {
       String userEmail = userService.getCurrentUser().getEmail();
       String logoutUrl = userService.createLogoutURL("/");
       info = new LoginObject(logoutUrl, userEmail);
-
+      LOGGER.info("currently logged in to account " + userEmail + ". Created logout URL " + logoutUrl);
     } else {
       String loginUrl = userService.createLoginURL("/");
       info = new LoginObject(loginUrl, null);
-
+      LOGGER.info("not currently logged in. Created login URL " + loginUrl);
     }
     response.getWriter().println(gson.toJson(info));
   }
@@ -43,6 +46,7 @@ public class AuthServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     if(!userService.isUserLoggedIn()) {
+      LOGGER.info("User not currently logged in, returning.");
       return;
     }
 
@@ -64,6 +68,7 @@ public class AuthServlet extends HttpServlet {
       e.setProperty("name", nickname);
       datastore.put(e);
     }
+    LOGGER.info("Updated nickname to " + nickname + " for user " + email);
     response.sendRedirect("/index.html");
   }
 
