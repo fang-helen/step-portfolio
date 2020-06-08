@@ -196,7 +196,7 @@ function refreshComments() {
               js[i].propertyMap.content, 
               js[i].propertyMap.timestamp, 
               js[i].propertyMap.upvotes, 
-              js[i].propertyMap.author, 
+              js[i].propertyMap.name, 
               i
           )
         );
@@ -354,6 +354,7 @@ async function vote(i, amount) {
   getAndRefreshComments();
 }
 
+/* fetches data from authentication servlet and updates webpage display */
 async function login() {
   const response = await fetch("/auth");
   user = await response.json();
@@ -367,4 +368,16 @@ async function login() {
     document.getElementById("user").innerText = "guest";
     document.getElementById("comment-user").innerText = "Guest";
   }
+}
+
+async function updateNickname() {
+  newNickname = document.getElementById("new-nickname").value;
+  if(newNickname == null || newNickname.length == 0) {
+    newNickname.value = "FAILED";
+    return;
+  }
+  if(!user.loggedIn) {
+    login();
+  }
+  const response = await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
 }
