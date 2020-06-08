@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -120,9 +122,10 @@ public class DataServlet extends HttpServlet {
       response.sendRedirect("/index.html");
       return;
     }
-    String auth = request.getParameter("enter-author");
-    if(auth == null || auth.length() == 0) {
-      auth = "";
+    UserService userService = UserServiceFactory.getUserService();
+    String auth = "";
+    if(userService.isUserLoggedIn()) {
+      auth = userService.getCurrentUser().getEmail();
     }
 
     Entity comment = new Entity("Comment");

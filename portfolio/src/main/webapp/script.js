@@ -286,7 +286,9 @@ function createElement(text, millis, upvotes, author, i) {
   const authorField = document.createElement("div");
   authorField.className = "comment-author";
   if(author != null && author.length > 0) {
-    authorField.innerText = "Author: " + author;
+    authorField.innerText = author;
+  } else {
+    authorField.innerText = "Guest";
   }
 
   upDownBox.appendChild(up);
