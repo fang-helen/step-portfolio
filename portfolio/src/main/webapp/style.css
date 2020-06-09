@@ -389,11 +389,11 @@ select option {
 }
 
 .up {
-  color: #95f0e5
+  /* color: #95f0e5 */
 }
 
 .down {
-  color: #e3a6a6;
+  /* color: #e3a6a6; */
 }
 
 .up-counter {
