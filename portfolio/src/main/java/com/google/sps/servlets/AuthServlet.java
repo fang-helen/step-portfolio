@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 @WebServlet("/auth")
 public class AuthServlet extends HttpServlet {
 
-  private static final Logger LOGGER = Logger.getLogger(DataServlet.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(AuthServlet.class.getName());
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
