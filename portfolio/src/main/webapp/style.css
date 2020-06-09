@@ -388,14 +388,6 @@ select option {
   line-height: 1;
 }
 
-.up {
-  /* color: #95f0e5 */
-}
-
-.down {
-  /* color: #e3a6a6; */
-}
-
 .up-counter {
   font-size: 12px;
   vertical-align: middle;
