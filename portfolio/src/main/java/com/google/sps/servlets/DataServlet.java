@@ -97,7 +97,6 @@ public class DataServlet extends HttpServlet {
     } else {
       query.addSort(sortParam, SortDirection.ASCENDING);
     }
-    
     PreparedQuery results = datastore.prepare(query);
 
     database = new ArrayList<>();
