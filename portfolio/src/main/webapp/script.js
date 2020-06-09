@@ -13,6 +13,9 @@
 // limitations under the License.
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+const red = "#e3a6a6";
+const green = "#95f0e5";
+
 // json "cache" of currently queried comments
 var js = "";
 // json object of logged-in user's information
@@ -40,8 +43,6 @@ function load() {
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
   document.getElementById("find-author").value = showingAuthor;
-
-  getAndRefreshComments();
 }
 
 /* Parses the cookie string to find any saved comment settings. */
@@ -102,14 +103,23 @@ function rotateItem(index) {
 }
 
 /* Fetches comment data from the servlet and refreshes the comment box content. */
-async function getAndRefreshComments() {
+function getAndRefreshComments() {
   var url = "/data?limit=" + totalElems + "&sort=" + sortDir + "&sortBy=" + sortBy;
   if(showingAuthor.length > 0) {
     url = url + "&auth=" + showingAuthor;
   }
-  const response = await fetch(url);
-  js = await response.json();
-  refreshComments();  
+  const response = fetch(url);
+  response.then(handleCommentJson);
+}
+
+function handleCommentJson(response) {
+  const commentJSON = response.json();
+  commentJSON.then(handleCommentRefresh);
+}
+
+function handleCommentRefresh(commentJson) {
+  js = commentJson;
+  refreshComments();
 }
 
 /* Updates the comment display based on user input and saves settings to cookies. */
@@ -197,6 +207,7 @@ function refreshComments() {
               js[i].propertyMap.timestamp, 
               js[i].propertyMap.upvotes, 
               js[i].propertyMap.name, 
+              js[i].propertyMap.author,
               i
           )
         );
@@ -223,10 +234,10 @@ function computeMaxPage() {
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
  * @param {number} upvotes The upvote count of the comment.
- * @param {string} author The original comment author.
+ * @param {string} author The original comment author id.
  * @param {number} i The index of the comment in the js array.
  */
-function createElement(text, millis, upvotes, author, i) {
+function createElement(text, millis, upvotes, name, author, i) {
   const date = new Date(millis);
 
   const wrapper = document.createElement("div");
@@ -247,14 +258,17 @@ function createElement(text, millis, upvotes, author, i) {
   box.appendChild(textWrapper);
   box.appendChild(timeWrapper);
 
-  const trash = document.createElement("img");
-  trash.className = "trash";
-  trash.alt = "Delete";
-  trash.src = "/images/trash.png";
-  trash.onclick = function() {
-    deleteComment(i);
-  };
-  box.appendChild(trash);
+  // can only delete comments if you are the original author 
+  if(author.localeCompare(user.email) == 0) {
+    const trash = document.createElement("img");
+    trash.className = "trash";
+    trash.alt = "Delete";
+    trash.src = "/images/trash.png";
+    trash.onclick = function() {
+        deleteComment(i);
+    };
+    box.appendChild(trash);
+  }
 
   // build box containing upvote info
   const upDownBox = document.createElement("div");
@@ -263,9 +277,6 @@ function createElement(text, millis, upvotes, author, i) {
   const up = document.createElement("div");
   up.className = "up";
   up.innerText = "+";
-  up.onclick = function() {
-    vote(i, 1);
-  }
 
   const upCounter = document.createElement("div");
   upCounter.className = "up-counter";
@@ -280,14 +291,30 @@ function createElement(text, millis, upvotes, author, i) {
   const down = document.createElement("div");
   down.className = "down";
   down.innerText = "-";
+  
+  if(user.loggedIn) {
+    var v = js[i]["propertyMap"][user.email];
+    if(v === undefined) {
+      v = 0;
+    }
+    if(v < 0) {
+      down.style.color = red;
+    } else if (v > 0) {
+      up.style.color = green;
+    }
+  }
+
+  up.onclick = function() {
+    vote(i, 1);
+  }
   down.onclick = function() {
     vote(i, -1);
   }
 
   const authorField = document.createElement("div");
   authorField.className = "comment-author";
-  if(author != null && author.length > 0) {
-    authorField.innerText = author;
+  if(name != null && name.length > 0) {
+    authorField.innerText = name;
   } else {
     authorField.innerText = "Guest";
   }
@@ -337,27 +364,36 @@ async function deleteComment(i) {
 
 /* Increments or decrements the upvote count of a comment */
 async function vote(i, amount) {
-  var upvotes = js[i].propertyMap.upvotes;
-  upvotes += amount;
+  if(!user.loggedIn) {
+    login();
+  }
   const id = js[i].key.id;
+  await fetch("/upvote-data?id=" + id + "&vote=" + amount);
+  getAndRefreshComments();
 
+  var upvotes = js[i].propertyMap.upvotes;
   var countText = upvotes;
   if(upvotes > 0) {
     countText = "+" + upvotes;
   } else if (upvotes == 0) {
     countText = "";
   }
-  // do this so visual feedback is instantaneous
   document.getElementsByClassName("up-counter")[i - (pg-1)*numElemsPerPage].innerText = countText;
-
-  const response = await fetch("/upvote-data?id=" + id + "&vote=" + upvotes);
-  getAndRefreshComments();
 }
 
 /* fetches data from authentication servlet and updates webpage display */
-async function login() {
-  const response = await fetch("/auth");
-  user = await response.json();
+function login() {
+  const response = fetch("/auth");
+  response.then(handleLogin);
+}
+
+function handleLogin(response) {
+  const userJSON = response.json();
+  userJSON.then(handleUser);
+}
+
+function handleUser(userJson) {
+  user = userJson;
   document.getElementById("login").href = user.url;
   if(user.loggedIn) {
     document.getElementById("login").innerText = "Logout";
@@ -368,6 +404,8 @@ async function login() {
     document.getElementById("user").innerText = "guest";
     document.getElementById("comment-user").innerText = "Guest";
   }
+
+  getAndRefreshComments();
 }
 
 /* updates user nickname and refreshes comments section */
