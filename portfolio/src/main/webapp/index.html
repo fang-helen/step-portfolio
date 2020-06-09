@@ -32,7 +32,11 @@
             aspiring software engineer.</p>
         <form action = "/data" method = "POST">
           <div id = "form-container">
-            <p id = "comment-user">Guest</p>
+            <div id = "edit-nickname-box">
+              <div id = "comment-user">Guest</div>
+              <input type = "text" name = "new-nickname" id = "new-nickname" placeholder = "New name..." maxlength = "35">
+              <div id = "nickname-toggle" onclick = "toggleNicknameDisplay()">test</div>
+            </div>
             <textarea name = "enter-text" id = "comment-field" placeholder = "Leave a comment!" maxlength = "3000"></textarea>
           </div>
           <button id = "submit" class = "accent2" type = "submit">⇾</button>
@@ -178,9 +182,6 @@
           </div>
         </div>
       </div>
-        <input type = "text" name = "new-nickname" id = "new-nickname" placeholder = "New name..." maxlength = "35">
-        <button onclick = "updateNickname()">test</button>
-        <p id = "test">tgt</p>
     </div>
   </body>
 </html>
