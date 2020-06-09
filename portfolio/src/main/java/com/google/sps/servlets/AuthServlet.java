@@ -32,11 +32,22 @@ public class AuthServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
       String logoutUrl = userService.createLogoutURL("/");
-      info = new LoginObject(logoutUrl, userEmail);
+
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      Query query =
+        new Query("User")
+            .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, userEmail));
+      String userNickname = userEmail;
+      PreparedQuery results = datastore.prepare(query);
+      Entity entity = results.asSingleEntity();
+      if (entity != null) {
+        userNickname = entity.getProperty("name").toString();
+      }
+      info = new LoginObject(logoutUrl, userEmail, userNickname);
       LOGGER.info("currently logged in to account " + userEmail + ". Created logout URL " + logoutUrl);
     } else {
       String loginUrl = userService.createLoginURL("/");
-      info = new LoginObject(loginUrl, null);
+      info = new LoginObject(loginUrl, null, null);
       LOGGER.info("not currently logged in. Created login URL " + loginUrl);
     }
     response.getWriter().println(gson.toJson(info));
@@ -77,10 +88,12 @@ public class AuthServlet extends HttpServlet {
     boolean loggedIn;
     String url;
     String email;
+    String name;
 
-    public LoginObject(String url, String email) {
+    public LoginObject(String url, String email, String name) {
       this.url = url;
       this.email = email;
+      this.name = name;
       loggedIn = (email != null);
     }
   }

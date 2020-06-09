@@ -361,8 +361,8 @@ async function login() {
   document.getElementById("login").href = user.url;
   if(user.loggedIn) {
     document.getElementById("login").innerText = "Logout";
-    document.getElementById("user").innerText = user.email;
-    document.getElementById("comment-user").innerText = user.email;
+    document.getElementById("user").innerText = user.name;
+    document.getElementById("comment-user").innerText = user.name;
   } else {
     document.getElementById("login").innerText = "Login";
     document.getElementById("user").innerText = "guest";
