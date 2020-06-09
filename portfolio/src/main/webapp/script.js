@@ -34,6 +34,9 @@ var pg = 1;
 // filter by author
 var showingAuthor = "";
 
+// displaying edit nickname box?
+var editing = false;
+
 /* Loads page based on comment settings from cookies and loads the comments. */
 function load() {
   parseCookie();
@@ -365,7 +368,8 @@ async function deleteComment(i) {
 /* Increments or decrements the upvote count of a comment */
 async function vote(i, amount) {
   if(!user.loggedIn) {
-    login();
+    alert("Please login first!");
+    return;
   }
   const id = js[i].key.id;
   await fetch("/upvote-data?id=" + id + "&vote=" + amount);
@@ -415,8 +419,26 @@ async function updateNickname() {
     return;
   }
   if(!user.loggedIn) {
-    login();
+    alert("Please login first!");
+    return;
   }
   await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
   getAndRefreshComments();
+}
+
+
+function toggleNicknameDisplay() {
+  const nameLabel = document.getElementById("comment-user");
+  const nicknameField = document.getElementById("new-nickname");
+
+  if(editing) {
+    editing = false;
+    nameLabel.style.display = "inline";
+    nicknameField.style.display = "none";
+    // updateNickname();
+  } else {
+    editing = true;
+    nameLabel.style.display = "none";
+    nicknameField.style.display = "inline";
+  }
 }
