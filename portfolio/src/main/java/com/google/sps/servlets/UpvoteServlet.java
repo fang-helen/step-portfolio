@@ -12,10 +12,13 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.Key;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet("/upvote-data")
 public class UpvoteServlet extends HttpServlet {
+
+  private static final Logger LOGGER = Logger.getLogger(DataServlet.class.getName());
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -31,9 +34,11 @@ public class UpvoteServlet extends HttpServlet {
         Entity comment = datastore.get(key);
         comment.setProperty("upvotes", vote);
         datastore.put(comment);
+        LOGGER.info("changed upvote count for comment id " + id);
       } catch (EntityNotFoundException e) {
         response.setContentType("text/html;");
         response.getWriter().println("comment not found");
+        LOGGER.log(Level.WARNING, "comment not found for id " + id);
       }
     }
   }

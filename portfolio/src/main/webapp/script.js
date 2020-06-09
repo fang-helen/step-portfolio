@@ -13,8 +13,10 @@
 // limitations under the License.
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-//json "cache" of currently queried comments
+// json "cache" of currently queried comments
 var js = "";
+// json object of logged-in user's information
+var user = "";
 
 // current sort direction
 var sortDir = "descending";
@@ -116,7 +118,7 @@ function commentConfig() {
   var newSortBy = document.getElementById("sort-by").value;
   var newElemsPerPage = parseInt(document.getElementById("pg-limit").value);
   var newTotal = parseInt(document.getElementById("limit").value);
-  var findAuthor =  document.getElementById("find-author").value;
+  var findAuthor =  document.getElementById("find-author").value.trim();
   var needGet = false;
   var needRefresh = false;
 
@@ -194,7 +196,7 @@ function refreshComments() {
               js[i].propertyMap.content, 
               js[i].propertyMap.timestamp, 
               js[i].propertyMap.upvotes, 
-              js[i].propertyMap.author, 
+              js[i].propertyMap.name, 
               i
           )
         );
@@ -221,6 +223,7 @@ function computeMaxPage() {
  * @param {string} text The text content of the comment.
  * @param {number} millis The timestamp, in milliseconds, of the comment.
  * @param {number} upvotes The upvote count of the comment.
+ * @param {string} author The original comment author.
  * @param {number} i The index of the comment in the js array.
  */
 function createElement(text, millis, upvotes, author, i) {
@@ -241,6 +244,9 @@ function createElement(text, millis, upvotes, author, i) {
   timeWrapper.className = "comment-time";
   timeWrapper.innerText = dateString(date);
 
+  box.appendChild(textWrapper);
+  box.appendChild(timeWrapper);
+
   const trash = document.createElement("img");
   trash.className = "trash";
   trash.alt = "Delete";
@@ -248,9 +254,6 @@ function createElement(text, millis, upvotes, author, i) {
   trash.onclick = function() {
     deleteComment(i);
   };
-
-  box.appendChild(textWrapper);
-  box.appendChild(timeWrapper);
   box.appendChild(trash);
 
   // build box containing upvote info
@@ -284,7 +287,9 @@ function createElement(text, millis, upvotes, author, i) {
   const authorField = document.createElement("div");
   authorField.className = "comment-author";
   if(author != null && author.length > 0) {
-    authorField.innerText = "Author: " + author;
+    authorField.innerText = author;
+  } else {
+    authorField.innerText = "Guest";
   }
 
   upDownBox.appendChild(up);
@@ -346,5 +351,34 @@ async function vote(i, amount) {
   document.getElementsByClassName("up-counter")[i - (pg-1)*numElemsPerPage].innerText = countText;
 
   const response = await fetch("/upvote-data?id=" + id + "&vote=" + upvotes);
+  getAndRefreshComments();
+}
+
+/* fetches data from authentication servlet and updates webpage display */
+async function login() {
+  const response = await fetch("/auth");
+  user = await response.json();
+  document.getElementById("login").href = user.url;
+  if(user.loggedIn) {
+    document.getElementById("login").innerText = "Logout";
+    document.getElementById("user").innerText = user.email;
+    document.getElementById("comment-user").innerText = user.email;
+  } else {
+    document.getElementById("login").innerText = "Login";
+    document.getElementById("user").innerText = "guest";
+    document.getElementById("comment-user").innerText = "Guest";
+  }
+}
+
+/* updates user nickname and refreshes comments section */
+async function updateNickname() {
+  newNickname = document.getElementById("new-nickname").value.trim();
+  if(newNickname == null || newNickname.length == 0) {
+    return;
+  }
+  if(!user.loggedIn) {
+    login();
+  }
+  await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
   getAndRefreshComments();
 }

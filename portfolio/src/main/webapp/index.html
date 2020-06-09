@@ -6,7 +6,15 @@
     <link rel = "stylesheet" href = "style.css">
     <script src = "script.js"></script>
   </head>
-  <body id = "body" class = "base" onload = "load()">
+  <body id = "body" class = "base" onload = "load(); login()">
+    <div id = "top-nav">
+      <div id = "top-nav-left">
+        <span id = "welcome">Hello, <span id = "user" class = "accent2">guest</span>!</span>
+      </div>
+      <div id = "top-nav-right">
+        <a id = "login">Login</a>
+      </div>
+    </div>
     <div class = "content-left">
       <h1>Hello!</h1>
       <img src = "images/pfp.jpg" id = "pfp" alt = "a picture of me!"/>
@@ -24,7 +32,7 @@
             aspiring software engineer.</p>
         <form action = "/data" method = "POST">
           <div id = "form-container">
-            <input type = "text" name = "enter-author" id = "enter-author" placeholder = "Your name (optional)" maxlength = "35">
+            <p id = "comment-user">Guest</p>
             <textarea name = "enter-text" id = "comment-field" placeholder = "Leave a comment!" maxlength = "3000"></textarea>
           </div>
           <button id = "submit" class = "accent2" type = "submit">⇾</button>
