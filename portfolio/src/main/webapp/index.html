@@ -6,7 +6,7 @@
     <link rel = "stylesheet" href = "style.css">
     <script src = "script.js"></script>
   </head>
-  <body id = "body" class = "base" onload = "load(); login()">
+  <body id = "body" class = "base" onload = "login()">
     <div id = "top-nav">
       <div id = "top-nav-left">
         <span id = "welcome">Hello, <span id = "user" class = "accent2">guest</span>!</span>
@@ -178,6 +178,9 @@
           </div>
         </div>
       </div>
+        <input type = "text" name = "new-nickname" id = "new-nickname" placeholder = "New name..." maxlength = "35">
+        <button onclick = "updateNickname()">test</button>
+        <p id = "test">tgt</p>
     </div>
   </body>
 </html>
