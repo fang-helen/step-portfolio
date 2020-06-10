@@ -567,6 +567,7 @@ function toggleNicknameDisplay() {
     nicknameField.style.display = "inline";
   }
 }
+
 function loadMap() {
     const map = new google.maps.Map(
       document.getElementById('map'), {
