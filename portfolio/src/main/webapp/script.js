@@ -383,20 +383,22 @@ async function updateNickname() {
   getAndRefreshComments();
 }
 
-async function translateText() {
-  const button = document.getElementById("translate");
-  const target = document.getElementById("target");
-  button.innerText = "translating";
-  var text = "hello";
-  button.innerText = text;
+/**
+ * Translates content from the webpage.
+ *
+ * @param {string} src Id of document element with source text.
+ * @param {string} tgt Id of document element to place translated text. 
+ */
+async function translateText(src, tgt) {
+  var text = document.getElementById(src).innerText;
   var language = "zh";
-  button.innerText = language;
   var params = new URLSearchParams();
   params.append("text", text);
   params.append("lang", language);
   var request = new Request("/translate-data", {method: "POST", body: params});
 
-  target.innerText = "loading...";
+  const target = document.getElementById(tgt);
+  target.innerText = "loading translation...";
   var result = await fetch(request);
   target.innerText = await result.text();
 }
