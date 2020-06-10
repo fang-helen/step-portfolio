@@ -403,10 +403,12 @@ function handleUser(userJson) {
     document.getElementById("login").innerText = "Logout";
     document.getElementById("user").innerText = user.name;
     document.getElementById("comment-user").innerText = user.name;
+    document.getElementById("nickname-toggle").style.display = "inline-block";
   } else {
     document.getElementById("login").innerText = "Login";
     document.getElementById("user").innerText = "guest";
     document.getElementById("comment-user").innerText = "Guest";
+    document.getElementById("nickname-toggle").style.display = "none";
   }
 
   getAndRefreshComments();
@@ -430,6 +432,7 @@ async function updateNickname() {
 function toggleNicknameDisplay() {
   const nameLabel = document.getElementById("comment-user");
   const nicknameField = document.getElementById("new-nickname");
+  const nameValue = nameLabel.innerText;
 
   if(editing) {
     editing = false;
@@ -438,6 +441,7 @@ function toggleNicknameDisplay() {
     // updateNickname();
   } else {
     editing = true;
+    nicknameField.value = nameValue;
     nameLabel.style.display = "none";
     nicknameField.style.display = "inline";
   }
