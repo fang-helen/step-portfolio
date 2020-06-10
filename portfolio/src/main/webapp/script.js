@@ -508,6 +508,7 @@ async function updateNickname() {
   getAndRefreshComments();
 }
 
+<<<<<<< HEAD
 /**
  * Translates content from the webpage and resizes dropdown container, if appplicable.
  *
@@ -565,4 +566,12 @@ function toggleNicknameDisplay() {
     nameLabel.style.display = "none";
     nicknameField.style.display = "inline";
   }
+}
+function loadMap() {
+    const map = new google.maps.Map(
+      document.getElementById('map'), {
+        center: {lat: 37.422, lng: -122.084}, 
+        zoom: 16
+      }
+    );
 }
