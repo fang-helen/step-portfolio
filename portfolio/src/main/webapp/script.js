@@ -438,7 +438,7 @@ function toggleNicknameDisplay() {
     editing = false;
     nameLabel.style.display = "inline";
     nicknameField.style.display = "none";
-    // updateNickname();
+    updateNickname();
   } else {
     editing = true;
     nicknameField.value = nameValue;
