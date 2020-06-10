@@ -463,3 +463,9 @@ select option {
   color: #f7f7f7;
   margin-top: 30px;
 }
+
+#map {
+  width: 500px;
+  height: 500px;
+  border: 1px solid;
+}
