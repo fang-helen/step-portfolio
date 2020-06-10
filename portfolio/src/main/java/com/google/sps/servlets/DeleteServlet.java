@@ -23,7 +23,7 @@ import java.util.List;
 @WebServlet("/delete-data")
 public class DeleteServlet extends HttpServlet {
 
-  private static final Logger LOGGER = Logger.getLogger(DataServlet.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(DeleteServlet.class.getName());
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
