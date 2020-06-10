@@ -47,12 +47,18 @@
         </div>
         <div class = "dropdown-text" id = "about-section">
           <div class = "dropdown-text-content"> 
-            <p>I am a rising sophomore at UT Austin. I like to think that I have 
+            <div id = "about-language-box">
+              <span>Translate to: </span>
+              <select id = "about-language" 
+                    onchange = "translateText('about-1', 'about-1', 'about-language'); translateText('about-2', 'about-2', 'about-language')">
+              </select>
+            </div>
+            <p id = "about-1">I am a rising sophomore at UT Austin. I like to think that I have 
                 a reputation of being a reliable, efficient worker and having an 
                 easygoing personality. I’m interested in computer science because I like 
                 math and logic, and found programming to be really fun after I first 
                 learned Java in high school.</p>
-            <p>I have four years of coding experience, and this is my first technical 
+            <p id = "about-2">I have four years of coding experience, and this is my first technical 
                 internship. Before this, I’ve dabbled in a variety of miscellaneous 
                 activities -- last year, I held an internship with the media department 
                 in the Travis County Tax Office, where I translated several PSAs relating 
