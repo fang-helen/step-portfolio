@@ -131,11 +131,12 @@ form {
 }
 
 #edit-nickname-box {
+  background-color: transparent;
   display: flex;
   flex-flow: row nowrap;
   font-size: 16px;
   height: 35px;
-  background-color: transparent;
+  justify-content: center;
   padding: 2px;
   margin: 0;
   margin-bottom: 10px;
@@ -149,11 +150,17 @@ form {
 }
 
 #new-nickname {
+  background-color: transparent;
+  border-style: none;
+  color: #f7f7f7;
   display: none;
 }
 
 #nickname-toggle {
   cursor: pointer;
+  display: none;
+  height: 75%;
+  object-fit: contain;
   margin-left: 15px;
 }
 
