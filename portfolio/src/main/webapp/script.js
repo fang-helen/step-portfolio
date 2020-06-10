@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+const langs = {
+    "en": "English",
+    "zh": "中文",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "vi": "Tiếng Việt"
+}
+
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 // json "cache" of currently queried comments
 var js = "";
@@ -232,12 +243,13 @@ function createElement(text, millis, upvotes, author, i) {
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
 
-  // build box containing comment text and timestamp
+  // box containing comment text and timestamp
   const box = document.createElement("div");
   box.className = "comment-box";
 
   const textWrapper = document.createElement("div");
   textWrapper.className = "comment-text";
+  textWrapper.id = "comment" + i;
   textWrapper.innerText = text;
 
   const timeWrapper = document.createElement("div");
@@ -256,7 +268,7 @@ function createElement(text, millis, upvotes, author, i) {
   };
   box.appendChild(trash);
 
-  // build box containing upvote info
+  // box containing upvote and author info
   const upDownBox = document.createElement("div");
   upDownBox.className = "upvote-downvote";
   
@@ -291,14 +303,39 @@ function createElement(text, millis, upvotes, author, i) {
   } else {
     authorField.innerText = "Guest";
   }
+  
+  // build drop-down to select language
+  const languageBox = document.createElement("div");
+  languageBox.className = "select-language";
+  const languageLabel = document.createElement("span");
+  languageLabel.innerText = "Translate to: ";
+  const languageSelect = document.createElement("select");
+  languageSelect.id = "lang" + i;
+  for(var langKey in langs) {
+    const langOption = document.createElement("option");
+    langOption.value = langKey;
+    langOption.innerText = langs[langKey];
+    languageSelect.appendChild(langOption);
+  }
+  languageSelect.value = "en";
+  languageBox.appendChild(languageLabel);
+  languageBox.appendChild(languageSelect);
+  languageSelect.onchange = function() {
+    translateText(textWrapper.id, textWrapper.id, languageSelect.id);
+  }
 
   upDownBox.appendChild(up);
   upDownBox.appendChild(upCounter);
   upDownBox.appendChild(down);
   upDownBox.appendChild(authorField);
+
+  const commentBottom = document.createElement("div");
+  commentBottom.className = "comment-bottom";
+  commentBottom.appendChild(upDownBox);
+  commentBottom.appendChild(languageBox);
   
   wrapper.appendChild(box);
-  wrapper.appendChild(upDownBox);
+  wrapper.appendChild(commentBottom);
   return wrapper;
 }
 
@@ -387,17 +424,19 @@ async function updateNickname() {
  * Translates content from the webpage.
  *
  * @param {string} src Id of document element with source text.
- * @param {string} tgt Id of document element to place translated text. 
+ * @param {string} tgt Id of document element to place translated text.
+ * @param {string} lngId Id of document dropdown containing language code. 
  */
-async function translateText(src, tgt) {
+async function translateText(src, tgt, lngId) {
   var text = document.getElementById(src).innerText;
-  var language = "zh";
+  var language = document.getElementById(lngId).value;
+  const target = document.getElementById(tgt);
+
   var params = new URLSearchParams();
   params.append("text", text);
   params.append("lang", language);
   var request = new Request("/translate-data", {method: "POST", body: params});
 
-  const target = document.getElementById(tgt);
   target.innerText = "loading translation...";
   var result = await fetch(request);
   target.innerText = await result.text();
