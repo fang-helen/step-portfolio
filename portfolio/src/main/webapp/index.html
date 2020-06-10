@@ -4,6 +4,9 @@
     <meta charset = "UTF-8">
     <title>My Portfolio</title>
     <link rel = "stylesheet" href = "style.css">
+    <script async defer 
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQE1sILkLy-vBuOf-WodJ1w-8J5S-6Hso">
+    </script>
     <script src = "script.js"></script>
   </head>
   <body id = "body" class = "base" onload = "load()">
@@ -185,6 +188,10 @@
             <button onclick = "deleteAllComments()" id = "delete-all">DELETE ALL COMMENTS</button>
           </div>
         </div>
+      </div>
+      <div id = "map-box">
+          <button onclick = "loadMap();">get map</button>
+          <div id = "map"></div>
       </div>
     </div>
   </body>
