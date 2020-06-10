@@ -130,14 +130,38 @@ form {
   width: 90%;
 }
 
-#comment-user {
-  display: inline-block;
-  font-size: 16px;
-  height: 30px;
+#edit-nickname-box {
   background-color: transparent;
+  display: flex;
+  flex-flow: row nowrap;
+  font-size: 16px;
+  height: 35px;
+  justify-content: center;
+  padding: 2px;
+  margin: 0;
   margin-bottom: 10px;
   text-align: left;
+  width: 100%;
   border-bottom: 1px solid;
+}
+
+#comment-user {
+  display: inline;
+}
+
+#new-nickname {
+  background-color: transparent;
+  border-style: none;
+  color: #f7f7f7;
+  display: none;
+}
+
+#nickname-toggle {
+  cursor: pointer;
+  display: none;
+  height: 75%;
+  object-fit: contain;
+  margin-left: 15px;
 }
 
 textarea {

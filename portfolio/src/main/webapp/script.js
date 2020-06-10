@@ -34,6 +34,9 @@ var pg = 1;
 // filter by author
 var showingAuthor = "";
 
+// displaying edit nickname box?
+var editing = false;
+
 /* Loads page based on comment settings from cookies and loads the comments. */
 function load() {
   parseCookie();
@@ -365,7 +368,8 @@ async function deleteComment(i) {
 /* Increments or decrements the upvote count of a comment */
 async function vote(i, amount) {
   if(!user.loggedIn) {
-    login();
+    alert("Please login first!");
+    return;
   }
   const id = js[i].key.id;
   await fetch("/upvote-data?id=" + id + "&vote=" + amount);
@@ -381,7 +385,7 @@ async function vote(i, amount) {
   document.getElementsByClassName("up-counter")[i - (pg-1)*numElemsPerPage].innerText = countText;
 }
 
-/* fetches data from authentication servlet and updates webpage display */
+/* Fetches data from authentication servlet and updates webpage display. */
 function login() {
   const response = fetch("/auth");
   response.then(handleLogin);
@@ -399,24 +403,46 @@ function handleUser(userJson) {
     document.getElementById("login").innerText = "Logout";
     document.getElementById("user").innerText = user.name;
     document.getElementById("comment-user").innerText = user.name;
+    document.getElementById("nickname-toggle").style.display = "inline-block";
   } else {
     document.getElementById("login").innerText = "Login";
     document.getElementById("user").innerText = "guest";
     document.getElementById("comment-user").innerText = "Guest";
+    document.getElementById("nickname-toggle").style.display = "none";
   }
 
   getAndRefreshComments();
 }
 
-/* updates user nickname and refreshes comments section */
+/* Updates user nickname and refreshes comments section. */
 async function updateNickname() {
   newNickname = document.getElementById("new-nickname").value.trim();
   if(newNickname == null || newNickname.length == 0) {
     return;
   }
   if(!user.loggedIn) {
-    login();
+    alert("Please login first!");
+    return;
   }
   await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
   getAndRefreshComments();
+}
+
+/* Toggles between nickname input and input display. */
+function toggleNicknameDisplay() {
+  const nameLabel = document.getElementById("comment-user");
+  const nicknameField = document.getElementById("new-nickname");
+  const nameValue = nameLabel.innerText;
+
+  if(editing) {
+    editing = false;
+    nameLabel.style.display = "inline";
+    nicknameField.style.display = "none";
+    updateNickname();
+  } else {
+    editing = true;
+    nicknameField.value = nameValue;
+    nameLabel.style.display = "none";
+    nicknameField.style.display = "inline";
+  }
 }
