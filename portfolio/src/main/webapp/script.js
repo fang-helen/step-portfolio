@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+// ISO codes and languages
 const langs = {
     "en": "English",
     "zh": "中文",
@@ -42,7 +42,7 @@ var pg = 1;
 // filter by author
 var showingAuthor = "";
 
-/* Loads page based on comment settings from cookies and loads the comments. */
+/* Loads page based on comment settings from cookies, loads comments, and populates language dropdowns. */
 function load() {
   parseCookie();
 
@@ -51,6 +51,9 @@ function load() {
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
   document.getElementById("find-author").value = showingAuthor;
+
+  const aboutLang = document.getElementById("about-language");
+  languageDropdown(aboutLang);
 
   getAndRefreshComments();
 }
@@ -312,13 +315,7 @@ function createElement(text, millis, upvotes, author, i) {
   const languageSelect = document.createElement("select");
   languageSelect.id = "lang" + i;
   languageSelect.className = "select-dropdown";
-  for(var langKey in langs) {
-    const langOption = document.createElement("option");
-    langOption.value = langKey;
-    langOption.innerText = langs[langKey];
-    languageSelect.appendChild(langOption);
-  }
-  languageSelect.value = "en";
+  languageDropdown(languageSelect);
   languageBox.appendChild(languageLabel);
   languageBox.appendChild(languageSelect);
   languageSelect.onchange = function() {
@@ -338,6 +335,21 @@ function createElement(text, millis, upvotes, author, i) {
   wrapper.appendChild(box);
   wrapper.appendChild(commentBottom);
   return wrapper;
+}
+
+/**
+ * Builds the language dropdown for a given select box.
+ *
+ * @param {Element} languageSelect The select box to add elements to.
+ */
+function languageDropdown(languageSelect) {
+  for(var langKey in langs) {
+    const langOption = document.createElement("option");
+    langOption.value = langKey;
+    langOption.innerText = langs[langKey];
+    languageSelect.appendChild(langOption);
+  }
+  languageSelect.value = "en";
 }
 
 /* Returns a condensed toString of Date information. */
