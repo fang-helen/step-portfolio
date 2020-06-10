@@ -420,6 +420,10 @@ select option {
   font-size: 12px;
 }
 
+.select-dropdown {
+  font-size: 12px;
+}
+
 #comment-nav {
   width: 100%;
 }

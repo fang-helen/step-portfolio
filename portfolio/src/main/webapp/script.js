@@ -311,6 +311,7 @@ function createElement(text, millis, upvotes, author, i) {
   languageLabel.innerText = "Translate to: ";
   const languageSelect = document.createElement("select");
   languageSelect.id = "lang" + i;
+  languageSelect.className = "select-dropdown";
   for(var langKey in langs) {
     const langOption = document.createElement("option");
     langOption.value = langKey;
