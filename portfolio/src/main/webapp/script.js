@@ -382,3 +382,12 @@ async function updateNickname() {
   await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
   getAndRefreshComments();
 }
+
+function loadMap() {
+    const map = new google.maps.Map(
+      document.getElementById('map'), {
+        center: {lat: 37.422, lng: -122.084}, 
+        zoom: 16
+      }
+    );
+}
