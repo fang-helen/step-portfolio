@@ -382,3 +382,21 @@ async function updateNickname() {
   await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
   getAndRefreshComments();
 }
+
+async function translateText() {
+  const button = document.getElementById("translate");
+  const target = document.getElementById("target");
+  button.innerText = "translating";
+  var text = "hello";
+  button.innerText = text;
+  var language = "zh";
+  button.innerText = language;
+  var params = new URLSearchParams();
+  params.append("text", text);
+  params.append("lang", language);
+  var request = new Request("/translate-data", {method: "POST", body: params});
+
+  target.innerText = "loading...";
+  var result = await fetch(request);
+  target.innerText = await result.text();
+}
