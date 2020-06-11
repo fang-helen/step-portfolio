@@ -15,12 +15,12 @@
 // ISO codes and languages
 const langs = {
     "en": "English",
-    "zh": "中文",
-    "ja": "日本語",
     "es": "Español",
     "fr": "Français",
+    "zh": "中文",
     "de": "Deutsch",
-    "vi": "Tiếng Việt"
+    "vi": "Tiếng Việt",
+    "ja": "日本語"
 }
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
@@ -65,11 +65,11 @@ function load() {
     var text = document.getElementsByClassName("dropdown-text")[0];
     var textContent = document.getElementsByClassName("dropdown-text-content")[0];
 
-    translateDropdown('about-1', 'about-1', 'about-language',0); 
+    translateDropdown('about-1', 'about-1', 'about-language', 'about-curr-lang', 0); 
     if(icon.classList.contains("clicked")) {
         text.style.height = (textContent.clientHeight + 60) + "px";
     } 
-    translateDropdown('about-2', 'about-2', 'about-language',0);
+    translateDropdown('about-2', 'about-2', 'about-language', 'about-curr-lang', 0);
     if(icon.classList.contains("clicked")) {
         text.style.height = (textContent.clientHeight + 60) + "px";
     } 
@@ -299,7 +299,7 @@ function createElement(text, millis, upvotes, name, author, languageCode, i) {
     trash.alt = "Delete";
     trash.src = "/images/trash.png";
     trash.onclick = function() {
-        deleteComment(i);
+      deleteComment(i);
     };
     box.appendChild(trash);
   }
@@ -361,6 +361,7 @@ function createElement(text, millis, upvotes, name, author, languageCode, i) {
   if(langs.hasOwnProperty(languageCode)) {
     language = langs[languageCode];
   }
+  thisLang.id = "thisLang" + i;
   thisLang.innerText = "Language: " + language;
   const divider = document.createElement("span");
   divider.innerText = " | ";
@@ -376,7 +377,7 @@ function createElement(text, millis, upvotes, name, author, languageCode, i) {
   languageBox.appendChild(languageLabel);
   languageBox.appendChild(languageSelect);
   languageSelect.onchange = function() {
-    translateDropdown(textWrapper.id, textWrapper.id, languageSelect.id, 3);
+    translateDropdown(textWrapper.id, textWrapper.id, languageSelect.id, thisLang.id, 3);
   }
 
   upDownBox.appendChild(up);
@@ -511,22 +512,29 @@ async function updateNickname() {
  * @param {string} src Id of document element with source text.
  * @param {string} tgt Id of document element to place translated text.
  * @param {string} lngId Id of document dropdown containing language code. 
+ * @param {string} thisLang Id of document element displaying current language.
  * @param {number} i Index of dropdown container on the page.
  */
-function translateDropdown(src, tgt, lngId, i) {
+function translateDropdown(src, tgt, lngId, thisLang, i) {
   var text = document.getElementById(src).innerText;
   var language = document.getElementById(lngId).value;
   const target = document.getElementById(tgt);
+  const label = document.getElementById(thisLang);
 
   var params = new URLSearchParams();
   params.append("text", text);
   params.append("lang", language);
   var request = new Request("/translate-data", {method: "POST", body: params});
   
-  target.innerText = "loading translation...";
+  target.innerText = "Loading translation...";
   fetch(request).then(result => result.text()).then(
     function(translatedText) {
     target.innerText = translatedText;
+    var langName = "??";
+    if(langs.hasOwnProperty(language)) {
+      langName = langs[language];
+    }
+    label.innerText = "Language: " + langName;
     if(i >= 0) {
       var icon = document.getElementsByClassName("plus")[i];
       var text = document.getElementsByClassName("dropdown-text")[i];
