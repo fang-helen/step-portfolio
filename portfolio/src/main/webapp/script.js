@@ -54,7 +54,20 @@ function load() {
 
   const aboutLang = document.getElementById("about-language");
   languageDropdown(aboutLang);
+  aboutLang.onchange = function() {
+    var icon = document.getElementsByClassName("plus")[0];
+    var text = document.getElementsByClassName("dropdown-text")[0];
+    var textContent = document.getElementsByClassName("dropdown-text-content")[0];
 
+    translateDropdown('about-1', 'about-1', 'about-language',0); 
+    if(icon.classList.contains("clicked")) {
+        text.style.height = (textContent.clientHeight + 60) + "px";
+    } 
+    translateDropdown('about-2', 'about-2', 'about-language',0);
+    if(icon.classList.contains("clicked")) {
+        text.style.height = (textContent.clientHeight + 60) + "px";
+    } 
+  }
   getAndRefreshComments();
 }
 
@@ -319,7 +332,7 @@ function createElement(text, millis, upvotes, author, i) {
   languageBox.appendChild(languageLabel);
   languageBox.appendChild(languageSelect);
   languageSelect.onchange = function() {
-    translateText(textWrapper.id, textWrapper.id, languageSelect.id);
+    translateDropdown(textWrapper.id, textWrapper.id, languageSelect.id, 3);
   }
 
   upDownBox.appendChild(up);
@@ -434,13 +447,14 @@ async function updateNickname() {
 }
 
 /**
- * Translates content from the webpage.
+ * Translates content from the webpage and resizes dropdown container, if appplicable.
  *
  * @param {string} src Id of document element with source text.
  * @param {string} tgt Id of document element to place translated text.
  * @param {string} lngId Id of document dropdown containing language code. 
+ * @param {number} i Index of dropdown container on the page.
  */
-async function translateText(src, tgt, lngId) {
+function translateDropdown(src, tgt, lngId, i) {
   var text = document.getElementById(src).innerText;
   var language = document.getElementById(lngId).value;
   const target = document.getElementById(tgt);
@@ -449,8 +463,18 @@ async function translateText(src, tgt, lngId) {
   params.append("text", text);
   params.append("lang", language);
   var request = new Request("/translate-data", {method: "POST", body: params});
-
+  
   target.innerText = "loading translation...";
-  var result = await fetch(request);
-  target.innerText = await result.text();
+  fetch(request).then(result => result.text()).then(
+    function(translatedText) {
+    target.innerText = translatedText;
+    if(i >= 0) {
+      var icon = document.getElementsByClassName("plus")[i];
+      var text = document.getElementsByClassName("dropdown-text")[i];
+      var textContent = document.getElementsByClassName("dropdown-text-content")[i];
+      if(icon.classList.contains("clicked")) {
+        text.style.height = (textContent.clientHeight + 60) + "px";
+      } 
+    }
+  });
 }
