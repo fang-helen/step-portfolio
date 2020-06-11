@@ -74,7 +74,7 @@ function load() {
         text.style.height = (textContent.clientHeight + 60) + "px";
     } 
   }
-  getAndRefreshComments();
+  login();
 }
 
 /* Parses the cookie string to find any saved comment settings. */
