@@ -17,10 +17,10 @@ const langs = {
     "en": "English",
     "es": "Español",
     "fr": "Français",
-    "zh": "中文",
+    "zh": "中文",    
     "de": "Deutsch",
     "vi": "Tiếng Việt",
-    "ja": "日本語"
+    "ja": "日本語",
 }
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
