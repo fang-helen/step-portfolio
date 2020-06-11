@@ -240,6 +240,7 @@ function refreshComments() {
               js[i].propertyMap.upvotes, 
               js[i].propertyMap.name, 
               js[i].propertyMap.author,
+              js[i].propertyMap.language,
               i
           )
         );
@@ -269,7 +270,7 @@ function computeMaxPage() {
  * @param {string} author The original comment author id.
  * @param {number} i The index of the comment in the js array.
  */
-function createElement(text, millis, upvotes, name, author, i) {
+function createElement(text, millis, upvotes, name, author, languageCode, i) {
   const date = new Date(millis);
 
   const wrapper = document.createElement("div");
@@ -352,15 +353,26 @@ function createElement(text, millis, upvotes, name, author, i) {
     authorField.innerText = "Guest";
   }
   
-  // build drop-down to select language
+  // build drop-down area to select language
   const languageBox = document.createElement("div");
   languageBox.className = "select-language";
+  const thisLang = document.createElement("span");
+  var language = "??";
+  if(langs.hasOwnProperty(languageCode)) {
+    language = langs[languageCode];
+  }
+  thisLang.innerText = "Language: " + language;
+  const divider = document.createElement("span");
+  divider.innerText = " | ";
+  divider.className = "divider";
   const languageLabel = document.createElement("span");
   languageLabel.innerText = "Translate to: ";
   const languageSelect = document.createElement("select");
   languageSelect.id = "lang" + i;
   languageSelect.className = "select-dropdown";
   languageDropdown(languageSelect);
+  languageBox.appendChild(thisLang);
+  languageBox.appendChild(divider);
   languageBox.appendChild(languageLabel);
   languageBox.appendChild(languageSelect);
   languageSelect.onchange = function() {
