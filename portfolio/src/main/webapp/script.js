@@ -550,6 +550,7 @@ function toggleNicknameDisplay() {
   }
 }
 
+
 function loadMap() {
     const map = new google.maps.Map(
       document.getElementById('map'), {
