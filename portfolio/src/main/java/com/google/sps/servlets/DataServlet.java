@@ -97,7 +97,6 @@ public class DataServlet extends HttpServlet {
     } else {
       query.addSort(sortParam, SortDirection.ASCENDING);
     }
-    
     PreparedQuery results = datastore.prepare(query);
 
     database = new ArrayList<>();
@@ -106,26 +105,27 @@ public class DataServlet extends HttpServlet {
       // add author filter to search
       int count = 0;
       while(count < limit && itr.hasNext()) {
-        Entity entity = itr.next();
+        Entity e = itr.next();
         // check against nickname first
-        String eAuth = entity.getProperty("name").toString();
+        String eAuth = e.getProperty("name").toString();
         eAuth = eAuth.replaceAll("\\s", "");
         if(eAuth.equalsIgnoreCase(auth)) {
           count ++;
-          database.add(entity);
+          database.add(e);
         } else {
           // if not a match, also check against email
-          String email = entity.getProperty("author").toString();
+          String email = e.getProperty("author").toString();
           email = email.replaceAll("\\s", "");
           if(email.toLowerCase().contains(auth.toLowerCase())) {
             count ++;
-            database.add(entity);
+            database.add(e);
           }
         }
       }
     } else {
       for(int i = 0; i < limit && itr.hasNext(); i++) {
-        database.add(itr.next());
+        Entity e = itr.next();
+        database.add(e);
       }
     }
 
@@ -180,4 +180,5 @@ public class DataServlet extends HttpServlet {
     LOGGER.info("added comment " + text);
     response.sendRedirect("/index.html");
   }
+
 }
