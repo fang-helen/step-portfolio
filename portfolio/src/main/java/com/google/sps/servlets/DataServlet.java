@@ -173,10 +173,9 @@ public class DataServlet extends HttpServlet {
       }
     }
     // detect the language
-    // Translate translate = TranslateOptions.getDefaultInstance().getService();
-    // Detection detectedLanguage = translate.detect(text);
-    // String language = detectedLanguage.getLanguage();
-    String language = "en";
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
+    Detection detectedLanguage = translate.detect(text);
+    String language = detectedLanguage.getLanguage();
 
     Entity comment = new Entity("Comment");
     comment.setProperty("content", text);
