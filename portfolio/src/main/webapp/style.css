@@ -180,6 +180,13 @@ textarea {
   top: 30%;
  }
 
+ #about-language-box {
+  font-size: 16px;
+  margin-top: 25px;
+  text-align: right;
+  width: 100%;
+ }
+
 /* Dropdowns */
 
 .dropdown-item {
@@ -398,12 +405,17 @@ select option {
   cursor: pointer;
 }
 
+.comment-bottom {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
 .upvote-downvote {
+  flex-grow: 1;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   margin-top: 5px;
-  width: 100%;
 }
 
 .up, .down {
@@ -424,6 +436,15 @@ select option {
   vertical-align: middle;
   line-height: 1;
   padding-left: 10px;
+}
+
+.select-language {
+  width: 150px;
+  font-size: 12px;
+}
+
+.select-dropdown {
+  font-size: 12px;
 }
 
 #comment-nav {

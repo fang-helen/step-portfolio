@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ISO codes and languages
+const langs = {
+    "en": "English",
+    "zh": "中文",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "vi": "Tiếng Việt"
+}
+
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 const red = "#e3a6a6";
 const green = "#95f0e5";
@@ -37,7 +48,7 @@ var showingAuthor = "";
 // displaying edit nickname box?
 var editing = false;
 
-/* Loads page based on comment settings from cookies and loads the comments. */
+/* Loads page based on comment settings from cookies, loads comments, and populates language dropdowns. */
 function load() {
   parseCookie();
 
@@ -46,6 +57,24 @@ function load() {
   document.getElementById("limit").value = totalElems;
   document.getElementById("pg-limit").value = numElemsPerPage;
   document.getElementById("find-author").value = showingAuthor;
+
+  const aboutLang = document.getElementById("about-language");
+  languageDropdown(aboutLang);
+  aboutLang.onchange = function() {
+    var icon = document.getElementsByClassName("plus")[0];
+    var text = document.getElementsByClassName("dropdown-text")[0];
+    var textContent = document.getElementsByClassName("dropdown-text-content")[0];
+
+    translateDropdown('about-1', 'about-1', 'about-language',0); 
+    if(icon.classList.contains("clicked")) {
+        text.style.height = (textContent.clientHeight + 60) + "px";
+    } 
+    translateDropdown('about-2', 'about-2', 'about-language',0);
+    if(icon.classList.contains("clicked")) {
+        text.style.height = (textContent.clientHeight + 60) + "px";
+    } 
+  }
+  login();
 }
 
 /* Parses the cookie string to find any saved comment settings. */
@@ -246,12 +275,13 @@ function createElement(text, millis, upvotes, name, author, i) {
   const wrapper = document.createElement("div");
   wrapper.className = "comment";
 
-  // build box containing comment text and timestamp
+  // box containing comment text and timestamp
   const box = document.createElement("div");
   box.className = "comment-box";
 
   const textWrapper = document.createElement("div");
   textWrapper.className = "comment-text";
+  textWrapper.id = "comment" + i;
   textWrapper.innerText = text;
 
   const timeWrapper = document.createElement("div");
@@ -273,7 +303,7 @@ function createElement(text, millis, upvotes, name, author, i) {
     box.appendChild(trash);
   }
 
-  // build box containing upvote info
+  // box containing upvote and author info
   const upDownBox = document.createElement("div");
   upDownBox.className = "upvote-downvote";
   
@@ -290,7 +320,7 @@ function createElement(text, millis, upvotes, name, author, i) {
     count = "";
   }
   upCounter.innerText = count;
-
+  
   const down = document.createElement("div");
   down.className = "down";
   down.innerText = "-";
@@ -321,15 +351,50 @@ function createElement(text, millis, upvotes, name, author, i) {
   } else {
     authorField.innerText = "Guest";
   }
+  
+  // build drop-down to select language
+  const languageBox = document.createElement("div");
+  languageBox.className = "select-language";
+  const languageLabel = document.createElement("span");
+  languageLabel.innerText = "Translate to: ";
+  const languageSelect = document.createElement("select");
+  languageSelect.id = "lang" + i;
+  languageSelect.className = "select-dropdown";
+  languageDropdown(languageSelect);
+  languageBox.appendChild(languageLabel);
+  languageBox.appendChild(languageSelect);
+  languageSelect.onchange = function() {
+    translateDropdown(textWrapper.id, textWrapper.id, languageSelect.id, 3);
+  }
 
   upDownBox.appendChild(up);
   upDownBox.appendChild(upCounter);
   upDownBox.appendChild(down);
   upDownBox.appendChild(authorField);
+
+  const commentBottom = document.createElement("div");
+  commentBottom.className = "comment-bottom";
+  commentBottom.appendChild(upDownBox);
+  commentBottom.appendChild(languageBox);
   
   wrapper.appendChild(box);
-  wrapper.appendChild(upDownBox);
+  wrapper.appendChild(commentBottom);
   return wrapper;
+}
+
+/**
+ * Builds the language dropdown for a given select box.
+ *
+ * @param {Element} languageSelect The select box to add elements to.
+ */
+function languageDropdown(languageSelect) {
+  for(var langKey in langs) {
+    const langOption = document.createElement("option");
+    langOption.value = langKey;
+    langOption.innerText = langs[langKey];
+    languageSelect.appendChild(langOption);
+  }
+  languageSelect.value = "en";
 }
 
 /* Returns a condensed toString of Date information. */
@@ -426,6 +491,39 @@ async function updateNickname() {
   }
   await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
   getAndRefreshComments();
+}
+
+/**
+ * Translates content from the webpage and resizes dropdown container, if appplicable.
+ *
+ * @param {string} src Id of document element with source text.
+ * @param {string} tgt Id of document element to place translated text.
+ * @param {string} lngId Id of document dropdown containing language code. 
+ * @param {number} i Index of dropdown container on the page.
+ */
+function translateDropdown(src, tgt, lngId, i) {
+  var text = document.getElementById(src).innerText;
+  var language = document.getElementById(lngId).value;
+  const target = document.getElementById(tgt);
+
+  var params = new URLSearchParams();
+  params.append("text", text);
+  params.append("lang", language);
+  var request = new Request("/translate-data", {method: "POST", body: params});
+  
+  target.innerText = "loading translation...";
+  fetch(request).then(result => result.text()).then(
+    function(translatedText) {
+    target.innerText = translatedText;
+    if(i >= 0) {
+      var icon = document.getElementsByClassName("plus")[i];
+      var text = document.getElementsByClassName("dropdown-text")[i];
+      var textContent = document.getElementsByClassName("dropdown-text-content")[i];
+      if(icon.classList.contains("clicked")) {
+        text.style.height = (textContent.clientHeight + 60) + "px";
+      } 
+    }
+  });
 }
 
 /* Toggles between nickname input and input display. */
