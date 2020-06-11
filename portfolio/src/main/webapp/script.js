@@ -48,7 +48,12 @@ var showingAuthor = "";
 // displaying edit nickname box?
 var editing = false;
 
-/* Loads page based on comment settings from cookies, loads comments, and populates language dropdowns. */
+/**
+ * Onload actions --
+ *     loads comment settings from cookies,
+ *     loads comments from servlet,
+ *     populates language dropdowns
+ */
 function load() {
   parseCookie();
 
