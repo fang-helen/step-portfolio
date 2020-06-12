@@ -74,7 +74,7 @@ public final class FindMeetingQuery {
   }
 
   private int eventEnd(Event e) {
-    return eventStart(e) + e.when().duration();
+    return e.when().end();
   }
 
   // checks if an event would affect the ability of any requested attendees to attend the meeting 
@@ -91,22 +91,30 @@ public final class FindMeetingQuery {
     TimeRange firstRange = partition.get(first);
     TimeRange lastRange = partition.get(last);
     List<TimeRange> result = new ArrayList<>();
-    // case 1: when spans OVER first and last -> result.size() == 0
-
-    // case 2: when starts before first, ends during last -> result.size() == 1
-
-    // case 3: when starts during first, ends after last -> result.size() == 1
-
-    // case 4: when starts during first and ends during last -> result.size() == 2
-
+    List<TimeRange> temp;
+    if(when.start() <= firstRange.start() && when.end() >= lastRange.end()) {
+      // case 1: when spans OVER first and last -> result.size() == 0
+    } else if(when.start() <= firstRange.start()) {
+      // case 2: when starts before first, ends during last -> result.size() == 1
+      temp = split(lastRange, when.end());
+      result.add(temp.get(1));
+    } else if(when.end() => lastRange.end()) {
+      // case 3: when starts during first, ends after last -> result.size() == 1
+      temp = split(firstRange, when.start());
+      result.add(temp.get(0));
+    } else {
+      // case 4: when starts during first and ends during last -> result.size() == 2
+      temp = split(firstRange, when.start());
+      result.add(temp.get(0));
+      temp = split(lastRange, when.end());
+      result.add(temp.get(1));
+    }
     return result;
   }
 
-  private void split(TimeRange range, int time, List<TimeRange> results) {
+  private List<TimeRange> split(TimeRange range, int time) {
+    List<TimeRange> result = new ArrayList<>();
 
-  }
-
-  private TimeRange merge(TimeRange range1, TimeRange range2) {
-      return null;
+    return result;
   }
 }
