@@ -503,6 +503,8 @@ async function updateNickname() {
     return;
   }
   await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
+  document.getElementById("comment-user").innerText = newNickname;
+  document.getElementById("user").innerText = newNickname;
   getAndRefreshComments();
 }
 
