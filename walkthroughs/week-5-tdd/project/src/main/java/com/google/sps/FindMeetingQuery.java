@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    // list of free TimeRanges available in the day
+    // keep track of list of free TimeRanges available in the day
     List<TimeRange> partition = new ArrayList<>();
 
     if(request.getDuration() >= TimeRange.WHOLE_DAY.duration()) {
@@ -30,11 +30,11 @@ public final class FindMeetingQuery {
     Collection<String> attendees = request.getAttendees();
     partition.add(TimeRange.WHOLE_DAY);
 
-    // remove all conflicting events from the list of free TimeRanges
+    // remove only conflicting timeslots from the list of free TimeRanges
     for(Event e: events) {
       Collection<String> eventAttendees = e.getAttendees();
 
-      if(hasOverlap(attendees, eventAttendees)) {
+      if(hasAttendanceOverlap(attendees, eventAttendees)) {
         TimeRange when = e.getWhen();
         // temp list used for re-partitioning
         List<TimeRange> temp = new ArrayList<>();
@@ -71,6 +71,7 @@ public final class FindMeetingQuery {
         partition = temp;
       }
     }
+    // check to see which free timeslots are long enough
     Collection<TimeRange> freeTimes = new ArrayList<>();
     for(TimeRange t: partition) {
       if(t.duration() >= request.getDuration()) {
@@ -80,18 +81,10 @@ public final class FindMeetingQuery {
     return freeTimes;
   }
 
-  private int eventStart(Event e) {
-    return e.getWhen().start();
-  }
-
-  private int eventEnd(Event e) {
-    return e.getWhen().end();
-  }
-
   // checks if an event would affect the ability of any requested attendees to attend the meeting 
-  private boolean hasOverlap(Collection<String> requestedAttendees, Collection<String> eventAttendees) {
-    for(String req: requestedAttendees) {
-      if(eventAttendees.contains(req)) {
+  private boolean hasAttendanceOverlap(Collection<String> attendees1, Collection<String> attendees2) {
+    for(String req: attendees1) {
+      if(attendees2.contains(req)) {
         return true;
       }
     }
@@ -123,6 +116,7 @@ public final class FindMeetingQuery {
     return result;
   }
 
+  // splits a TimeRange at a specified time into two TimeRanges and returns both as a list
   private List<TimeRange> split(TimeRange range, int time) {
     List<TimeRange> result = new ArrayList<>();
     int newDuration = time - range.start();
