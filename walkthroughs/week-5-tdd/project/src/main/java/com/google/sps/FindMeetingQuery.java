@@ -15,9 +15,58 @@
 package com.google.sps;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    // list of free TimeRanges available in the day
+    List<TimeRange> partition = new ArrayList<>();
+    Collection<String> attendees = request.getAttendees();
+    partition.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, TimeRange.WHOLE_DAY));
+
+    // remove all conflicting events from the list of free TimeRanges
+    for(Event e: events) {
+      Collection<String> eventAttendees = e.getAttendees();
+
+      if(hasOverlap(attendees, eventAttendees)) {
+        
+      }
+    }
+
+    return partition;
+  }
+
+  private int eventStart(Event e) {
+    return e.when().start();
+  }
+
+  private int eventEnd(Event e) {
+    return eventStart(e) + e.when().duration();
+  }
+
+  // checks if an event would affect the ability of any requested attendees to attend the meeting 
+  private boolean hasOverlap(Collection<String> requestedAttendees, Collection<String> eventAttendees) {
+    for(String req: requestedAttendees) {
+      if(eventAttendees.contains(req)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private List<TimeRange> splice(List<TimeRange> partition, int first, int last, TimeRange when) {
+    TimeRange firstRange = partition.get(first);
+    TimeRange lastRange = partition.get(last);
+    List<TimeRange> result = new ArrayList<>();
+    // case 1: when spans OVER first and last -> result.size() == 0
+
+    // case 2: when starts before first, ends during last -> result.size() == 1
+
+    // case 3: when starts during first, ends after last -> result.size() == 1
+
+    // case 4: when starts during first and ends during last -> result.size() == 2
+
+    return result;
   }
 }
