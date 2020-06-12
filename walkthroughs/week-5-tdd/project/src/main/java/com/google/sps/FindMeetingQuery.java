@@ -30,7 +30,34 @@ public final class FindMeetingQuery {
       Collection<String> eventAttendees = e.getAttendees();
 
       if(hasOverlap(attendees, eventAttendees)) {
-        
+        TimeRange when = e.getWhen();
+        // temp list used for re-partitioning
+        List<TimeRange> temp = new ArrayList<>();
+        int firstAffected = -1;
+        int lastAffected = -1;
+        for(int i = 0; i < partition.size() && firstAffected < 0; i ++) {
+          if(partition.get(i).overlaps(when)) {
+            firstAffected = i;
+          } else {
+            temp.add(partition.get(i));
+          }
+        }
+        // make changes only if free times have been affected
+        if(firstAffected >= 0) {
+          for(int i = firstAffected + 1; i < partition.size() && lastAffected < 0; i ++) {
+            if(!partition.get(i).overlaps(when)) {
+              lastAffected = i - 1;
+            }
+          }
+          List<TimeRange> afterSplice = splice(partition, firstAffected, lastAffected, when);
+          for(TimeRange t: afterSplice) {
+            temp.add(t);
+          }
+          for(int i = lastAffected + 1; i < partition.size(); i ++) {
+            temp.add(partition.get(i));
+          }
+        }
+        partition = temp;
       }
     }
 
