@@ -22,6 +22,11 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // list of free TimeRanges available in the day
     List<TimeRange> partition = new ArrayList<>();
+
+    if(request.getDuration() >= TimeRange.WHOLE_DAY.duration()) {
+      return partition;
+    }
+
     Collection<String> attendees = request.getAttendees();
     partition.add(TimeRange.WHOLE_DAY);
 
@@ -66,7 +71,13 @@ public final class FindMeetingQuery {
         partition = temp;
       }
     }
-    return partition;
+    Collection<TimeRange> freeTimes = new ArrayList<>();
+    for(TimeRange t: partition) {
+      if(t.duration() >= request.getDuration()) {
+        freeTimes.add(t);
+      }
+    }
+    return freeTimes;
   }
 
   private int eventStart(Event e) {
