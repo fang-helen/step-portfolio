@@ -44,11 +44,16 @@ public final class FindMeetingQuery {
         }
         // make changes only if free times have been affected
         if(firstAffected >= 0) {
+          // search for last affected timeslot
           for(int i = firstAffected + 1; i < partition.size() && lastAffected < 0; i ++) {
             if(!partition.get(i).overlaps(when)) {
               lastAffected = i - 1;
             }
           }
+          if(lastAffected < 0) {
+            lastAffected = partition.size() - 1;
+          }
+          // splice the conflicting times and add resulting free slots to new partition
           List<TimeRange> afterSplice = splice(partition, firstAffected, lastAffected, when);
           for(TimeRange t: afterSplice) {
             temp.add(t);
@@ -57,10 +62,10 @@ public final class FindMeetingQuery {
             temp.add(partition.get(i));
           }
         }
+        // refresh the partition
         partition = temp;
       }
     }
-
     return partition;
   }
 
@@ -95,5 +100,13 @@ public final class FindMeetingQuery {
     // case 4: when starts during first and ends during last -> result.size() == 2
 
     return result;
+  }
+
+  private void split(TimeRange range, int time, List<TimeRange> results) {
+
+  }
+
+  private TimeRange merge(TimeRange range1, TimeRange range2) {
+      return null;
   }
 }
