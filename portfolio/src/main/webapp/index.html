@@ -34,7 +34,7 @@
           <div id = "form-container">
             <div id = "edit-nickname-box">
               <div id = "comment-user">Guest</div>
-              <input type = "text" name = "new-nickname" id = "new-nickname" placeholder = "New name..." maxlength = "35">
+              <input type = "text" name = "new-nickname" id = "new-nickname" placeholder = "New name..." onfocusout = "toggleNicknameDisplay()" maxlength = "35">
               <img id = "nickname-toggle" onclick = "toggleNicknameDisplay()" src = "/images/edit.png"/>
             </div>
             <textarea name = "enter-text" id = "comment-field" placeholder = "Leave a comment!" maxlength = "3000"></textarea>
@@ -52,6 +52,8 @@
         <div class = "dropdown-text" id = "about-section">
           <div class = "dropdown-text-content"> 
             <div id = "about-language-box">
+              <span id = "about-curr-lang">Language: English</span>
+              <span class = "divider"> | </span> 
               <span>Translate to: </span>
               <select id = "about-language"></select>
             </div>

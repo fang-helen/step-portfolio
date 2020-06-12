@@ -31,6 +31,11 @@ import java.util.logging.Handler;
 import java.util.logging.Formatter;
 import java.util.logging.SimpleFormatter;
 
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
+import com.google.cloud.translate.Detection;
+
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -167,6 +172,10 @@ public class DataServlet extends HttpServlet {
         datastore.put(newUser);
       }
     }
+    // detect the language
+    Translate translate = TranslateOptions.getDefaultInstance().getService();
+    Detection detectedLanguage = translate.detect(text);
+    String language = detectedLanguage.getLanguage();
 
     Entity comment = new Entity("Comment");
     comment.setProperty("content", text);
@@ -174,6 +183,7 @@ public class DataServlet extends HttpServlet {
     comment.setProperty("upvotes", 0);
     comment.setProperty("author", auth);
     comment.setProperty("name", name);
+    comment.setProperty("language", language);
 
     datastore.put(comment);
 

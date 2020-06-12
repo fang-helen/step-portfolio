@@ -15,12 +15,12 @@
 // ISO codes and languages
 const langs = {
     "en": "English",
-    "zh": "中文",
-    "ja": "日本語",
     "es": "Español",
     "fr": "Français",
+    "zh": "中文",    
     "de": "Deutsch",
-    "vi": "Tiếng Việt"
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
 }
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
@@ -65,11 +65,11 @@ function load() {
     var text = document.getElementsByClassName("dropdown-text")[0];
     var textContent = document.getElementsByClassName("dropdown-text-content")[0];
 
-    translateDropdown('about-1', 'about-1', 'about-language',0); 
+    translateDropdown('about-1', 'about-1', 'about-language', 'about-curr-lang', 0); 
     if(icon.classList.contains("clicked")) {
         text.style.height = (textContent.clientHeight + 60) + "px";
     } 
-    translateDropdown('about-2', 'about-2', 'about-language',0);
+    translateDropdown('about-2', 'about-2', 'about-language', 'about-curr-lang', 0);
     if(icon.classList.contains("clicked")) {
         text.style.height = (textContent.clientHeight + 60) + "px";
     } 
@@ -240,6 +240,7 @@ function refreshComments() {
               js[i].propertyMap.upvotes, 
               js[i].propertyMap.name, 
               js[i].propertyMap.author,
+              js[i].propertyMap.language,
               i
           )
         );
@@ -269,7 +270,7 @@ function computeMaxPage() {
  * @param {string} author The original comment author id.
  * @param {number} i The index of the comment in the js array.
  */
-function createElement(text, millis, upvotes, name, author, i) {
+function createElement(text, millis, upvotes, name, author, languageCode, i) {
   const date = new Date(millis);
 
   const wrapper = document.createElement("div");
@@ -298,7 +299,7 @@ function createElement(text, millis, upvotes, name, author, i) {
     trash.alt = "Delete";
     trash.src = "/images/trash.png";
     trash.onclick = function() {
-        deleteComment(i);
+      deleteComment(i);
     };
     box.appendChild(trash);
   }
@@ -352,19 +353,31 @@ function createElement(text, millis, upvotes, name, author, i) {
     authorField.innerText = "Guest";
   }
   
-  // build drop-down to select language
+  // build drop-down area to select language
   const languageBox = document.createElement("div");
   languageBox.className = "select-language";
+  const thisLang = document.createElement("span");
+  var language = "??";
+  if(langs.hasOwnProperty(languageCode)) {
+    language = langs[languageCode];
+  }
+  thisLang.id = "thisLang" + i;
+  thisLang.innerText = "Language: " + language;
+  const divider = document.createElement("span");
+  divider.innerText = " | ";
+  divider.className = "divider";
   const languageLabel = document.createElement("span");
   languageLabel.innerText = "Translate to: ";
   const languageSelect = document.createElement("select");
   languageSelect.id = "lang" + i;
   languageSelect.className = "select-dropdown";
   languageDropdown(languageSelect);
+  languageBox.appendChild(thisLang);
+  languageBox.appendChild(divider);
   languageBox.appendChild(languageLabel);
   languageBox.appendChild(languageSelect);
   languageSelect.onchange = function() {
-    translateDropdown(textWrapper.id, textWrapper.id, languageSelect.id, 3);
+    translateDropdown(textWrapper.id, textWrapper.id, languageSelect.id, thisLang.id, 3);
   }
 
   upDownBox.appendChild(up);
@@ -490,6 +503,8 @@ async function updateNickname() {
     return;
   }
   await fetch(new Request("/auth", {method: "POST", body: new URLSearchParams("?nickname=" + newNickname)}));
+  document.getElementById("comment-user").innerText = newNickname;
+  document.getElementById("user").innerText = newNickname;
   getAndRefreshComments();
 }
 
@@ -499,22 +514,29 @@ async function updateNickname() {
  * @param {string} src Id of document element with source text.
  * @param {string} tgt Id of document element to place translated text.
  * @param {string} lngId Id of document dropdown containing language code. 
+ * @param {string} thisLang Id of document element displaying current language.
  * @param {number} i Index of dropdown container on the page.
  */
-function translateDropdown(src, tgt, lngId, i) {
+function translateDropdown(src, tgt, lngId, thisLang, i) {
   var text = document.getElementById(src).innerText;
   var language = document.getElementById(lngId).value;
   const target = document.getElementById(tgt);
+  const label = document.getElementById(thisLang);
 
   var params = new URLSearchParams();
   params.append("text", text);
   params.append("lang", language);
   var request = new Request("/translate-data", {method: "POST", body: params});
   
-  target.innerText = "loading translation...";
+  target.innerText = "Loading translation...";
   fetch(request).then(result => result.text()).then(
     function(translatedText) {
     target.innerText = translatedText;
+    var langName = "??";
+    if(langs.hasOwnProperty(language)) {
+      langName = langs[language];
+    }
+    label.innerText = "Language: " + langName;
     if(i >= 0) {
       var icon = document.getElementsByClassName("plus")[i];
       var text = document.getElementsByClassName("dropdown-text")[i];

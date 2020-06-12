@@ -439,7 +439,6 @@ select option {
 }
 
 .select-language {
-  width: 150px;
   font-size: 12px;
 }
 
@@ -461,5 +460,6 @@ select option {
 
 #delete-all {
   color: #f7f7f7;
+  display: none;
   margin-top: 30px;
 }
