@@ -460,5 +460,6 @@ select option {
 
 #delete-all {
   color: #f7f7f7;
+  display: none;
   margin-top: 30px;
 }
