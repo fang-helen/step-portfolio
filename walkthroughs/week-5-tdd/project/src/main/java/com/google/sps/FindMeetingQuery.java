@@ -23,7 +23,7 @@ public final class FindMeetingQuery {
     // list of free TimeRanges available in the day
     List<TimeRange> partition = new ArrayList<>();
     Collection<String> attendees = request.getAttendees();
-    partition.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, TimeRange.WHOLE_DAY));
+    partition.add(TimeRange.WHOLE_DAY);
 
     // remove all conflicting events from the list of free TimeRanges
     for(Event e: events) {
@@ -70,11 +70,11 @@ public final class FindMeetingQuery {
   }
 
   private int eventStart(Event e) {
-    return e.when().start();
+    return e.getWhen().start();
   }
 
   private int eventEnd(Event e) {
-    return e.when().end();
+    return e.getWhen().end();
   }
 
   // checks if an event would affect the ability of any requested attendees to attend the meeting 
@@ -98,7 +98,7 @@ public final class FindMeetingQuery {
       // case 2: when starts before first, ends during last -> result.size() == 1
       temp = split(lastRange, when.end());
       result.add(temp.get(1));
-    } else if(when.end() => lastRange.end()) {
+    } else if(when.end() >= lastRange.end()) {
       // case 3: when starts during first, ends after last -> result.size() == 1
       temp = split(firstRange, when.start());
       result.add(temp.get(0));
@@ -114,7 +114,9 @@ public final class FindMeetingQuery {
 
   private List<TimeRange> split(TimeRange range, int time) {
     List<TimeRange> result = new ArrayList<>();
-
+    int newDuration = time - range.start();
+    result.add(TimeRange.fromStartDuration(range.start(), newDuration));
+    result.add(TimeRange.fromStartDuration(time, range.duration() - newDuration));
     return result;
   }
 }
