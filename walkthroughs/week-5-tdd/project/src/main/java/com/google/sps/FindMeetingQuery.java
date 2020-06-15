@@ -56,7 +56,7 @@ public final class FindMeetingQuery {
         Schedule s = mandatorySchedules.get(name);
         if(s == null) {
           s = new Schedule();
-          mandatoryOverlap.put(name, s);
+          mandatorySchedules.put(name, s);
         }
         s.schedule.add(e.getWhen());
       }
@@ -66,7 +66,7 @@ public final class FindMeetingQuery {
         Schedule s = optionalSchedules.get(name);
         if(s == null) {
           s = new Schedule();
-          mandatoryOverlap.put(name, s);
+          optionalSchedules.put(name, s);
         }
         s.schedule.add(e.getWhen());
       }
@@ -146,7 +146,7 @@ public final class FindMeetingQuery {
       TimeRange t = partition.get(i);
       if(t.duration() >= duration) {
         int count = 0;
-        for(String name: schedules) {
+        for(String name: schedules.keySet()) {
           if(!Schedule.overlapsSchedule(schedules.get(name), t)) {
             count ++;
           }
@@ -263,8 +263,8 @@ public final class FindMeetingQuery {
         if(t.overlaps(when)) {
           return true;
         }
-        return false;
       }
+      return false;
     }
   }
 }
