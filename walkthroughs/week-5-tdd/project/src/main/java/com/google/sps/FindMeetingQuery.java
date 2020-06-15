@@ -45,11 +45,8 @@ public final class FindMeetingQuery {
       Collection<String> eventAttendees = e.getAttendees();
 
       if(hasAttendanceOverlap(attendees, eventAttendees)) {
-    //   if(intersection(attendees, eventAttendees)) {
-        TimeRange when = e.getWhen();
-        // temp list used for re-partitioning
-        
-        // refresh the partition
+        TimeRange when = e.getWhen();        
+        // create temp partition and refresh the partition
         partition = tempPartition(partition, when);
       }
     }
