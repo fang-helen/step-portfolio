@@ -130,28 +130,19 @@ public final class FindMeetingQuery {
       // case 1: when spans OVER first and last -> result.size() == 0
     } else if(when.start() <= firstRange.start()) {
       // case 2: when starts before first, ends during last -> result.size() == 1
-      temp = split(lastRange, when.end());
+      temp = TimeRange.split(lastRange, when.end());
       result.add(temp.get(1));
     } else if(when.end() >= lastRange.end()) {
       // case 3: when starts during first, ends after last -> result.size() == 1
-      temp = split(firstRange, when.start());
+      temp = TimeRange.split(firstRange, when.start());
       result.add(temp.get(0));
     } else {
       // case 4: when starts during first and ends during last -> result.size() == 2
-      temp = split(firstRange, when.start());
+      temp = TimeRange.split(firstRange, when.start());
       result.add(temp.get(0));
-      temp = split(lastRange, when.end());
+      temp = TimeRange.split(lastRange, when.end());
       result.add(temp.get(1));
     }
-    return result;
-  }
-
-  /** Splits a TimeRange at a specified time into two TimeRanges and returns both as a list. */
-  private List<TimeRange> split(TimeRange range, int time) {
-    List<TimeRange> result = new ArrayList<>();
-    int newDuration = time - range.start();
-    result.add(TimeRange.fromStartDuration(range.start(), newDuration));
-    result.add(TimeRange.fromStartDuration(time, range.duration() - newDuration));
     return result;
   }
 }
