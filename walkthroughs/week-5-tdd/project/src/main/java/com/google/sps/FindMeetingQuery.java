@@ -19,6 +19,16 @@ import java.util.List;
 import java.util.ArrayList;
 
 public final class FindMeetingQuery {
+
+  /**
+   * Finds non-conflicting timeslots to schedule a requested meeting.
+   * @param events     A Collection of existing events that must be accounted for when
+   *                  searching for a suitable time slot.
+   * @param request   A MeetingRequest to be acommodated, including an attendee list 
+   *                  and requested duration.
+   * @return          A collection of suitable TimeRanges that will not create time 
+   *                  conflicts for any requested attendees.
+   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // keep track of list of free TimeRanges available in the day
     List<TimeRange> partition = new ArrayList<>();
@@ -81,7 +91,7 @@ public final class FindMeetingQuery {
     return freeTimes;
   }
 
-  // checks if an event would affect the ability of any requested attendees to attend the meeting 
+  /** Checks for overlap between two attendee lists. */
   private boolean hasAttendanceOverlap(Collection<String> attendees1, Collection<String> attendees2) {
     for(String req: attendees1) {
       if(attendees2.contains(req)) {
@@ -91,6 +101,14 @@ public final class FindMeetingQuery {
     return false;
   }
 
+  /**
+   * Re-partitions an existing partition of free timeslots by removing all overlap with a given TimeRange.
+   * @param partition The existing partition of free TimeRanges in the day.
+   * @param first The index of the first TimeRange that will be affected in the original partition.
+   * @param last The index of the first TimeRange taht will be affected in the original partition.
+   * @param when The TimeRange of interest to remove from the existing partition.
+   * @return A list containing timeslots in the modified partition for the range between first and last.
+   */
   private List<TimeRange> splice(List<TimeRange> partition, int first, int last, TimeRange when) {
     TimeRange firstRange = partition.get(first);
     TimeRange lastRange = partition.get(last);
@@ -116,7 +134,7 @@ public final class FindMeetingQuery {
     return result;
   }
 
-  // splits a TimeRange at a specified time into two TimeRanges and returns both as a list
+  /** Splits a TimeRange at a specified time into two TimeRanges and returns both as a list. */
   private List<TimeRange> split(TimeRange range, int time) {
     List<TimeRange> result = new ArrayList<>();
     int newDuration = time - range.start();
