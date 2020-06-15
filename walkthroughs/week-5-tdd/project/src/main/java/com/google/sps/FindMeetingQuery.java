@@ -14,9 +14,9 @@
 
 package com.google.sps;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
 public final class FindMeetingQuery {
 
@@ -37,9 +37,42 @@ public final class FindMeetingQuery {
       return partition;
     }
 
-    Collection<String> attendees = request.getAttendees();
     partition.add(TimeRange.WHOLE_DAY);
+    long duration = request.getDuration();
 
+    // query for mandatory attendees first
+    Collection<String> attendees = request.getAttendees();
+    List<TimeRange> mandatory = performQuery(events, duration, attendees, partition);
+
+    // check if any of these slots work for the optional attendees
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
+    List<TimeRange> withOptional = performQuery(events, duration, optionalAttendees, mandatory);
+
+    if(attendees.size() <= 0) {
+      // no mandatory attendees to worry about, decide based on optional attendee list
+      return withOptional;
+    } else if(withOptional.size() <= 0) {
+      // no non-conflicting times for optional attendees, so mandatory takes higher priority
+      return mandatory;
+    }
+    return withOptional;
+  }
+
+  /**
+   * Finds non-conflicting timeslots to schedule a requested meeting based on existing partition.
+   * @param events    A Collection of existing events that must be accounted for when
+   *                  searching for a suitable time slot.
+   * @param duration  The duration of the requested meeting.
+   * @param attendees An attendee list to attempt to accommodate for.
+   * @return          A collection of suitable TimeRanges that will not create time 
+   *                  conflicts for any requested attendees.
+   */
+  private List<TimeRange> performQuery(
+      Collection<Event> events, 
+      long duration, 
+      Collection<String> attendees, 
+      List<TimeRange> partition) 
+  {
     // remove only conflicting timeslots from the list of free TimeRanges
     for(Event e: events) {
       Collection<String> eventAttendees = e.getAttendees();
@@ -51,9 +84,9 @@ public final class FindMeetingQuery {
       }
     }
     // check to see which free timeslots are long enough
-    Collection<TimeRange> freeTimes = new ArrayList<>();
+    List<TimeRange> freeTimes = new ArrayList<>();
     for(TimeRange t: partition) {
-      if(t.duration() >= request.getDuration()) {
+      if(t.duration() >= duration) {
         freeTimes.add(t);
       }
     }
