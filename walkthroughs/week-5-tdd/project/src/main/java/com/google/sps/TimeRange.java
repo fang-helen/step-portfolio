@@ -15,6 +15,8 @@
 package com.google.sps;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Class representing a span of time, enforcing properties (e.g. start comes before end) and
@@ -182,5 +184,17 @@ public final class TimeRange {
    */
   public static TimeRange fromStartDuration(int start, int duration) {
     return new TimeRange(start, duration);
+  }
+
+  /** Splits a TimeRange at a specified time into two TimeRanges and returns both as a list. */
+  public static List<TimeRange> split(TimeRange range, int time) {
+    if (!contains(range, time)) {
+      throw new IllegalArgumentException("Time to split at is not within the specified TimeRange.");
+    }
+    List<TimeRange> result = new ArrayList<>();
+    int newDuration = time - range.start();
+    result.add(TimeRange.fromStartDuration(range.start(), newDuration));
+    result.add(TimeRange.fromStartDuration(time, range.duration() - newDuration));
+    return result;
   }
 }
