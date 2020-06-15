@@ -47,7 +47,7 @@ public final class FindMeetingQuery {
       if(hasAttendanceOverlap(attendees, eventAttendees)) {
         TimeRange when = e.getWhen();        
         // create temp partition and refresh the partition
-        partition = tempPartition(partition, when);
+        partition = repartitionTimeRanges(partition, when);
       }
     }
     // check to see which free timeslots are long enough
@@ -76,7 +76,7 @@ public final class FindMeetingQuery {
    * @param when The TimeRange of interest to resolve conflicts with.
    * @return A new partition of TimeRanges that takes into account the conflicting TimeRange.
    */
-  private List<TimeRange> tempPartition(List<TimeRange> partition, TimeRange when) {
+  private List<TimeRange> repartitionTimeRanges(List<TimeRange> partition, TimeRange when) {
     List<TimeRange> temp = new ArrayList<>();
     int firstAffected = -1;
     int lastAffected = -1;
