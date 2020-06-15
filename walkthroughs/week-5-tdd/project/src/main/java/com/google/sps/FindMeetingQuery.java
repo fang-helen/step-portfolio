@@ -45,40 +45,12 @@ public final class FindMeetingQuery {
       Collection<String> eventAttendees = e.getAttendees();
 
       if(hasAttendanceOverlap(attendees, eventAttendees)) {
+    //   if(intersection(attendees, eventAttendees)) {
         TimeRange when = e.getWhen();
         // temp list used for re-partitioning
-        List<TimeRange> temp = new ArrayList<>();
-        int firstAffected = -1;
-        int lastAffected = -1;
-        for(int i = 0; i < partition.size() && firstAffected < 0; i ++) {
-          if(partition.get(i).overlaps(when)) {
-            firstAffected = i;
-          } else {
-            temp.add(partition.get(i));
-          }
-        }
-        // make changes only if free times have been affected
-        if(firstAffected >= 0) {
-          // search for last affected timeslot
-          for(int i = firstAffected + 1; i < partition.size() && lastAffected < 0; i ++) {
-            if(!partition.get(i).overlaps(when)) {
-              lastAffected = i - 1;
-            }
-          }
-          if(lastAffected < 0) {
-            lastAffected = partition.size() - 1;
-          }
-          // splice the conflicting times and add resulting free slots to new partition
-          List<TimeRange> afterSplice = splice(partition, firstAffected, lastAffected, when);
-          for(TimeRange t: afterSplice) {
-            temp.add(t);
-          }
-          for(int i = lastAffected + 1; i < partition.size(); i ++) {
-            temp.add(partition.get(i));
-          }
-        }
+        
         // refresh the partition
-        partition = temp;
+        partition = tempPartition(partition, when);
       }
     }
     // check to see which free timeslots are long enough
@@ -99,6 +71,46 @@ public final class FindMeetingQuery {
       }
     }
     return false;
+  }
+
+  /**
+   * Creates a new, temporary partition to resolve conflicts between a TimeRange and and existing partition.
+   * @param partition The current partition of TimeRanges.
+   * @param when The TimeRange of interest to resolve conflicts with.
+   * @return A new partition of TimeRanges that takes into account the conflicting TimeRange.
+   */
+  private List<TimeRange> tempPartition(List<TimeRange> partition, TimeRange when) {
+    List<TimeRange> temp = new ArrayList<>();
+    int firstAffected = -1;
+    int lastAffected = -1;
+    for(int i = 0; i < partition.size() && firstAffected < 0; i ++) {
+      if(partition.get(i).overlaps(when)) {
+        firstAffected = i;
+      } else {
+        temp.add(partition.get(i));
+      }
+    }
+    // make changes only if free times have been affected
+    if(firstAffected >= 0) {
+      // search for last affected timeslot
+      for(int i = firstAffected + 1; i < partition.size() && lastAffected < 0; i ++) {
+        if(!partition.get(i).overlaps(when)) {
+          lastAffected = i - 1;
+        }
+      }
+      if(lastAffected < 0) {
+        lastAffected = partition.size() - 1;
+      }
+      // splice the conflicting times and add resulting free slots to new partition
+      List<TimeRange> afterSplice = splice(partition, firstAffected, lastAffected, when);
+      for(TimeRange t: afterSplice) {
+        temp.add(t);
+      }
+      for(int i = lastAffected + 1; i < partition.size(); i ++) {
+        temp.add(partition.get(i));
+      }
+    }
+    return temp;
   }
 
   /**
