@@ -46,20 +46,12 @@ public final class FindMeetingQuery {
     Collection<String> optionalAttendees = request.getOptionalAttendees();
 
     Collection<Event> mandatoryAttendeeEvents = new ArrayList<>();
-    Collection<Event> optionalAttendeeEvents = new ArrayList<>();
-    Map<String, List<Event>> mandatorySchedules = new HashMap<>();
     Map<String, List<Event>> optionalSchedules = new HashMap<>();
     for(Event e: events) {
       // build mandatory attendee schedules
       Collection<String> eventAttendees = e.getAttendees();
-      List<String> mandatoryOverlap = attendanceOverlap(attendees, eventAttendees);
-      for(String name: mandatoryOverlap) {
-        List<Event> s = mandatorySchedules.get(name);
-        if(s == null) {
-          s = new ArrayList<>();
-          mandatorySchedules.put(name, s);
-        }
-        s.add(e);
+      if(attendanceOverlap(attendees, eventAttendees).size() > 0) {
+        mandatoryAttendeeEvents.add(e);
       }
       // build optional attendee schedules
       List<String> optionalOverlap = attendanceOverlap(optionalAttendees, eventAttendees);
@@ -71,19 +63,13 @@ public final class FindMeetingQuery {
         }
         s.add(e);
       }
-      if(mandatoryOverlap.size() > 0) {
-        mandatoryAttendeeEvents.add(e);
-      }
-      if(optionalOverlap.size() > 0) {
-        optionalAttendeeEvents.add(e);
-      }
     }
     // query for mandatory attendees first
     List<TimeRange> mandatory = performQuery(mandatoryAttendeeEvents, duration, partition);
     if(optionalAttendees.size() <= 0) {
       return mandatory;
     }
-    // check if any of these slots work for the optional attendees
+    // check if any of these slots work for any optional attendees
     List<TimeRange> withOptional = performBestFitQuery(duration, mandatory, optionalSchedules);
 
     if(attendees.size() <= 0) {
@@ -101,7 +87,7 @@ public final class FindMeetingQuery {
    * @param events    A Collection of existing events that must be accounted for when
    *                  searching for a suitable time slot.
    * @param duration  The duration of the requested meeting.
-   * @param attendees An attendee list to attempt to accommodate for.
+   * @param partition The existing timeslot partition to base off of.
    * @return          A collection of suitable TimeRanges that will not create time 
    *                  conflicts for any requested attendees.
    */
@@ -125,6 +111,16 @@ public final class FindMeetingQuery {
     return freeTimes;
   }
 
+  /**
+   * Finds optimal timeslots to schedule a requested meeting based on an existing
+   * partition, returning timeslots with the highest attendee availability.
+   * @param duration  The duration of the requested meeting.
+   * @param partition The existing timeslot partition to base off of.
+   * @param schedules A map of attendees to their existing event commitments to schedule around.
+   * @return          A collection of TimeRanges that will allow the greatest number of attendees
+   *                  to participate. If multiple timeslots allow the same number of participants,
+   *                  they will all be returned.
+   */
   private List<TimeRange> performBestFitQuery(
       long duration, 
       List<TimeRange> partition,
@@ -142,7 +138,7 @@ public final class FindMeetingQuery {
     if(nameList.size() <= 0) {
       return partition;
     }
-
+    // perform recursive partition-building
     List<TimeRange> result= new ArrayList<>();
     int max = 0;
     for(int i = 0; i < nameList.size(); i ++) {
@@ -174,9 +170,25 @@ public final class FindMeetingQuery {
     return result;
   }
 
+  /**
+   * A recursive helper method for schedule-optimizing.
+   * @param duration  The duration of the requested meeting.
+   * @param partition The existing timeslot partition to base off of.
+   * @param schedules A map of attendees to their existing event commitments to schedule around.
+   * @param nameList  An indexed list of keys for the schedules map.
+   * @param index     The position in nameList for the current recursive call.
+   * @param depth     The depth of the current recursive call, or the number of attendees
+   *                  that the current partition accommodates for.
+   * @param maxDepth  Container to hold the maximum depth achieved by the current partition on return,
+   *                  in order to return multiple items.    
+   * @return          A collection of TimeRanges that will allow the greatest number of attendees
+   *                  to participate. If multiple timeslots allow the same number of participants,
+   *                  they will all be returned.
+   */
   private List<TimeRange> recursiveQuery(long duration, List<TimeRange> partition, 
         Map<String, List<Event>> schedules, List<String> nameList, int index, int depth,
-        int[] maxDepth) {
+        int[] maxDepth) 
+  {
     maxDepth[0] = depth;
     // base case 1: reached end of list, no more attendees to check
     if(index == nameList.size()) {
