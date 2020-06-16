@@ -301,7 +301,7 @@ public final class FindMeetingQueryTest {
   }
 
   @Test 
-  public void optimalEarlyLate() {
+  public void optionalEarlyLate() {
     // Based on everyAttendeeIsConsidered, but an optional attendee C has an event that overlaps
     // a slot that would otherwise be free. That slot should be removed.
     // Events  :       |--A--|     |--B--|
@@ -330,7 +330,7 @@ public final class FindMeetingQueryTest {
   }
 
   @Test
-  public void optimalJustEnough() {
+  public void optionalJustEnough() {
     // Based on justEnoughRoom, but with an additional optional attendee that would overlap
     // the only available time. The optional attendee should be ignored.
     //
@@ -362,7 +362,6 @@ public final class FindMeetingQueryTest {
     // Events  :       |--A--|     |--B--|
     // Day     : |-----------------------------|
     // Options : |--1--|     |--2--|     |--3--|
-
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_30_MINUTES),
             Arrays.asList(PERSON_A)),
@@ -390,6 +389,7 @@ public final class FindMeetingQueryTest {
     // Events  :       |----B----|
     //           |---A---|     |---A---|
     // Day     : |---------------------|
+    System.out.println("RUNNING optionalNoGaps...");
 
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0800AM, false),
@@ -404,7 +404,40 @@ public final class FindMeetingQueryTest {
     request.addOptionalAttendee(PERSON_B);
 
     Collection<TimeRange> actual = query.query(events, request);
-    Collection<TimeRange> expected = Arrays.asList();
+    Collection<TimeRange> expected = 
+        Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0800AM, false),
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_1000AM, false),
+            TimeRange.fromStartEnd(TIME_1100AM, TimeRange.END_OF_DAY, true));
+    
+    Assert.assertEquals(expected, actual);
+  }
+  
+  @Test
+  public void optionalBestFit() {
+    // No mandatory attendees, only optional attendees with no gaps in schedules.
+    // Optimization algorithm should return 
+    //
+    // Events  : |----------B----------|
+    //           |---A---|     |---C---|
+    // Day     : |---------------------|
+
+    System.out.println("RUNNING optionalBestFit...");
+
+    Collection<Event> events = Arrays.asList(
+        new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0800AM, false),
+            Arrays.asList(PERSON_A)),
+        new Event("Event 2", TimeRange.WHOLE_DAY, Arrays.asList(PERSON_B)),
+        new Event("Event 3", TimeRange.fromStartEnd(TIME_1000AM, TimeRange.END_OF_DAY, true),
+            Arrays.asList(PERSON_C)));
+
+    MeetingRequest request = new MeetingRequest(NO_ATTENDEES, DURATION_1_HOUR);
+    request.addOptionalAttendee(PERSON_A);
+    request.addOptionalAttendee(PERSON_B);
+    request.addOptionalAttendee(PERSON_C);
+
+    Collection<TimeRange> actual = query.query(events, request);
+    Collection<TimeRange> expected = 
+        Arrays.asList(TimeRange.fromStartEnd(TIME_0800AM, TIME_1000AM, false));
     
     Assert.assertEquals(expected, actual);
   }
