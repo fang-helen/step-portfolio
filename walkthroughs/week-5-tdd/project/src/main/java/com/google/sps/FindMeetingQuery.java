@@ -16,6 +16,7 @@ package com.google.sps;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,29 +47,29 @@ public final class FindMeetingQuery {
 
     Collection<Event> mandatoryAttendeeEvents = new ArrayList<>();
     Collection<Event> optionalAttendeeEvents = new ArrayList<>();
-    Map<String, Schedule> mandatorySchedules = new HashMap<>();
-    Map<String, Schedule> optionalSchedules = new HashMap<>();
+    Map<String, List<Event>> mandatorySchedules = new HashMap<>();
+    Map<String, List<Event>> optionalSchedules = new HashMap<>();
     for(Event e: events) {
       // build mandatory attendee schedules
       Collection<String> eventAttendees = e.getAttendees();
       List<String> mandatoryOverlap = attendanceOverlap(attendees, eventAttendees);
       for(String name: mandatoryOverlap) {
-        Schedule s = mandatorySchedules.get(name);
+        List<Event> s = mandatorySchedules.get(name);
         if(s == null) {
-          s = new Schedule();
+          s = new ArrayList<>();
           mandatorySchedules.put(name, s);
         }
-        s.schedule.add(e);
+        s.add(e);
       }
       // build optional attendee schedules
       List<String> optionalOverlap = attendanceOverlap(optionalAttendees, eventAttendees);
       for(String name: optionalOverlap) {
-        Schedule s = optionalSchedules.get(name);
+        List<Event> s = optionalSchedules.get(name);
         if(s == null) {
-          s = new Schedule();
+          s = new ArrayList<>();
           optionalSchedules.put(name, s);
         }
-        s.schedule.add(e);
+        s.add(e);
       }
       if(mandatoryOverlap.size() > 0) {
         mandatoryAttendeeEvents.add(e);
@@ -77,13 +78,11 @@ public final class FindMeetingQuery {
         optionalAttendeeEvents.add(e);
       }
     }
-
     // query for mandatory attendees first
     List<TimeRange> mandatory = performQuery(mandatoryAttendeeEvents, duration, partition);
     if(optionalAttendees.size() <= 0) {
       return mandatory;
     }
-
     // check if any of these slots work for the optional attendees
     List<TimeRange> withOptional = performBestFitQuery(duration, mandatory, optionalSchedules);
 
@@ -129,28 +128,27 @@ public final class FindMeetingQuery {
   private List<TimeRange> performBestFitQuery(
       long duration, 
       List<TimeRange> partition,
-      Map<String, Schedule> schedules) 
+      Map<String, List<Event>> schedules) 
   {
-    // remove any optional attendees that cannot make any of the slots
-    Map<String, Schedule> updatedSchedules = new HashMap<>();
+    // remove optional attendees that cannot make any of the slots to reduce sample size
+    Map<String, List<Event>> updatedSchedules = new HashMap<>();
     List<String> nameList = new ArrayList<>();
     for(String name: schedules.keySet()) {
-      if(performQuery(schedules.get(name).schedule, duration, partition).size() > 0) {
+      if(performQuery(schedules.get(name), duration, partition).size() > 0) {
         updatedSchedules.put(name, schedules.get(name));
         nameList.add(name);
       }
     }
-
     if(nameList.size() <= 0) {
       return partition;
     }
 
     List<TimeRange> result= new ArrayList<>();
-
     int max = 0;
     for(int i = 0; i < nameList.size(); i ++) {
       int[] maxDepth = new int[1];
-      List<TimeRange> recursiveResult = recursiveQuery(duration, partition, updatedSchedules, nameList, i, 0, maxDepth);
+      List<TimeRange> recursiveResult = recursiveQuery(duration, partition, 
+            updatedSchedules, nameList, i, 0, maxDepth);
       if(maxDepth[0] > max) {
         result = new ArrayList<>();
         max = maxDepth[0];
@@ -161,35 +159,44 @@ public final class FindMeetingQuery {
         }
       }
     }
-
-    // TODO: sort + remove duplicates
-        System.out.println("RESULT: " + result);
-
+    // sort the result and remove any duplicates
+    if(result.size() > 0) {
+      Collections.sort(result, TimeRange.ORDER_BY_START);
+      List<TimeRange> removeDuplicates = new ArrayList<>();
+      removeDuplicates.add(result.get(0));
+      for(int i = 1; i < result.size(); i++) {
+        if(!result.get(i).equals(removeDuplicates.get(removeDuplicates.size() - 1))) {
+          removeDuplicates.add(result.get(i));
+        }
+      }
+      result = removeDuplicates;
+    }
     return result;
   }
 
   private List<TimeRange> recursiveQuery(long duration, List<TimeRange> partition, 
-        Map<String, Schedule> schedules, List<String> nameList, int index, int depth,
+        Map<String, List<Event>> schedules, List<String> nameList, int index, int depth,
         int[] maxDepth) {
     maxDepth[0] = depth;
-    if(partition.size() == 0 || index == nameList.size()) {
-        System.out.println("base case 1 reached " + index + " " + maxDepth[0] + " " + partition);
+    // base case 1: reached end of list, no more attendees to check
+    if(index == nameList.size()) {
       return partition;
     }
     String currentName = nameList.get(index);
-    List<TimeRange> intermediatePartition = performQuery(schedules.get(nameList.get(index)).schedule, duration, partition);
-    System.out.println("recursive call @ index = " + index + " and depth = " + depth);
-    System.out.println("itermediate result " + intermediatePartition);
+    List<TimeRange> intermediatePartition 
+        = performQuery(schedules.get(nameList.get(index)), duration, partition);
+    // base case 2: this attendee causes a conflict, stop and back up
     if(intermediatePartition.size() == 0) {
-        System.out.println("base case 2 reached " + index + " " + maxDepth[0] + " " + partition);
       return partition;
     }
-
+    // recursive case. keep the TimeRanges that will yield maximum depth (more attendees)
     List<TimeRange> result = new ArrayList<>();
     for(int i = index; i < nameList.size(); i ++) {
      currentName = nameList.get(i);
       int[] getMaxDepth = new int[1];
-      List<TimeRange> recursiveResult = recursiveQuery(duration, intermediatePartition, schedules, nameList, i + 1, depth + 1, getMaxDepth);
+      List<TimeRange> recursiveResult 
+            = recursiveQuery(duration, intermediatePartition, schedules, 
+                nameList, i + 1, depth + 1, getMaxDepth);
       if (getMaxDepth[0] > maxDepth[0]) {
         maxDepth[0] = getMaxDepth[0];
         result = new ArrayList<>();
@@ -200,9 +207,7 @@ public final class FindMeetingQuery {
         }
       } 
     }
-    System.out.println("exiting index = " + index + " and depth = " + depth + "; " + maxDepth[0] + " " + result);
     return result;
-
   }
 
   /** Checks for overlap between two attendee lists. */
@@ -287,23 +292,5 @@ public final class FindMeetingQuery {
       result.add(temp.get(1));
     }
     return result;
-  }
-
-  private static class Schedule {
-    
-    private List<Event> schedule;
-
-    private Schedule() {
-      schedule = new ArrayList<>();
-    }
-
-    private static boolean overlapsSchedule(Schedule s, TimeRange when) {
-      for(Event e: s.schedule) {
-        if(e.getWhen().overlaps(when)) {
-          return true;
-        }
-      }
-      return false;
-    }
   }
 }
