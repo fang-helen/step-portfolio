@@ -479,7 +479,8 @@ public final class FindMeetingQueryTest {
   @Test
   public void optionalComplex() {
     // A more complex test case to test how query() finds optimalal time slots
-    // All attendances are staggered, so query() should return the same slots
+    // There are many slots that would accommodate 2 attendees, but only one that
+    // accommodates 3.
     // Events  : |--A--|     |--A--|     |--A--|
     //                 |--B--|     |--B--|
     //           |--------D--------|     |--C--|       
