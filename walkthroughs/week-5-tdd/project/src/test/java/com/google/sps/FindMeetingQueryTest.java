@@ -414,11 +414,13 @@ public final class FindMeetingQueryTest {
   @Test
   public void optionalBestFit() {
     // No mandatory attendees, only optional attendees with no gaps in schedules.
-    // Optimization algorithm should return 
+    // Optimization algorithm should return the one slot in the middle where
+    // 2 attendees can make it.
     //
     // Events  : |----------B----------|
     //           |---A---|     |---C---|
     // Day     : |---------------------|
+    // Options :         |-----|
 
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0800AM, false),
