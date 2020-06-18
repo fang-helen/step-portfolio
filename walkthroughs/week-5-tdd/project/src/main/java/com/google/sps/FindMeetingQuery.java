@@ -123,7 +123,7 @@ public final class FindMeetingQuery {
    *                  to participate. If multiple timeslots allow the same number of participants,
    *                  they will all be returned.
    */
-  private List<TimeRange> findSlotsWithMostAttendees(
+  private Collection<TimeRange> findSlotsWithMostAttendees(
       long duration, 
       List<TimeRange> partition,
       Map<String, List<Event>> schedules) 
@@ -141,35 +141,7 @@ public final class FindMeetingQuery {
       return partition;
     }
     // perform recursive partition-building
-    // Set<TimeRange> result= new TreeSet<>(TimeRange.ORDER_BY_START);
-    List<TimeRange> result = new ArrayList<>();
-    int max = 0;
-    for(int i = 0; i < nameList.size(); i ++) {
-      int[] maxDepth = new int[1];
-      List<TimeRange> recursiveResult = recursiveQuery(duration, partition, 
-            updatedSchedules, nameList, i, 0, maxDepth);
-      if(maxDepth[0] > max) {
-        result.clear();
-        max = maxDepth[0];
-      }
-      if(maxDepth[0] >= max) {
-        for(TimeRange t: recursiveResult) {
-          result.add(t);
-        }
-      }
-    }
-    // sort the result and remove any duplicates
-    if(result.size() > 0) {
-      Collections.sort(result, TimeRange.ORDER_BY_START);
-      List<TimeRange> removeDuplicates = new ArrayList<>();
-      removeDuplicates.add(result.get(0));
-      for(int i = 1; i < result.size(); i++) {
-        if(!result.get(i).equals(removeDuplicates.get(removeDuplicates.size() - 1))) {
-          removeDuplicates.add(result.get(i));
-        }
-      }
-      result = removeDuplicates;
-    }
+    Collection<TimeRange> result = recursiveQuery(duration, partition, updatedSchedules, nameList, 0, 0, new int[1]);
     return result;
   }
 
@@ -188,39 +160,41 @@ public final class FindMeetingQuery {
    *                  to participate. If multiple timeslots allow the same number of participants,
    *                  they will all be returned.
    */
-  private List<TimeRange> recursiveQuery(long duration, List<TimeRange> partition, 
+  private Collection<TimeRange> recursiveQuery(long duration, List<TimeRange> partition, 
         Map<String, List<Event>> schedules, List<String> nameList, int index, int depth,
         int[] maxDepth) 
   {
     maxDepth[0] = depth;
-    // base case 1: reached end of list, no more attendees to check
+    // base case: reached end of list, no more attendees to check
     if(index == nameList.size()) {
       return partition;
     }
-    String currentName = nameList.get(index);
-    List<TimeRange> intermediatePartition 
-        = findSlots(schedules.get(nameList.get(index)), duration, partition);
-    // base case 2: this attendee causes a conflict, stop and back up
-    if(intermediatePartition.size() == 0) {
-      return partition;
-    }
     // recursive case. keep the TimeRanges that will yield maximum depth (more attendees)
-    List<TimeRange> result = new ArrayList<>();
+    Collection<TimeRange> result = new TreeSet<>(TimeRange.ORDER_BY_START);
     for(int i = index; i < nameList.size(); i ++) {
-     currentName = nameList.get(i);
-      int[] getMaxDepth = new int[1];
-      List<TimeRange> recursiveResult 
+      String currentName = nameList.get(i);
+      List<TimeRange> intermediatePartition 
+            = findSlots(schedules.get(currentName), duration, partition);
+      // keep going only if no conflicts for now
+      if(intermediatePartition.size() > 0) {
+        int[] getMaxDepth = new int[1];
+        Collection<TimeRange> recursiveResult 
             = recursiveQuery(duration, intermediatePartition, schedules, 
                 nameList, i + 1, depth + 1, getMaxDepth);
-      if (getMaxDepth[0] > maxDepth[0]) {
-        maxDepth[0] = getMaxDepth[0];
-        result.clear();
-      }
-      if(getMaxDepth[0] >= maxDepth[0]) {
-        for(TimeRange t: recursiveResult) {
-          result.add(t);
+        if(getMaxDepth[0] > maxDepth[0]) {
+          maxDepth[0] = getMaxDepth[0];
+          result.clear();
+        }
+        if(getMaxDepth[0] >= maxDepth[0]) {
+          for(TimeRange t: recursiveResult) {
+            result.add(t);
+          }
         }
       } 
+    }
+    // catch case where no non-conflicting partitions have been found
+    if(result.size() == 0) {
+      result = partition;
     }
     return result;
   }
