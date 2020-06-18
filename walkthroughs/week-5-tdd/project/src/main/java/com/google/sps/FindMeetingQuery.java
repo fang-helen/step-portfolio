@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class FindMeetingQuery {
 
@@ -65,12 +67,12 @@ public final class FindMeetingQuery {
       }
     }
     // query for mandatory attendees first
-    List<TimeRange> mandatory = performQuery(mandatoryAttendeeEvents, duration, partition);
+    List<TimeRange> mandatory = findSlots(mandatoryAttendeeEvents, duration, partition);
     if(optionalAttendees.size() <= 0) {
       return mandatory;
     }
     // check if any of these slots work for any optional attendees
-    List<TimeRange> withOptional = performBestFitQuery(duration, mandatory, optionalSchedules);
+    Collection<TimeRange> withOptional = findSlotsWithMostAttendees(duration, mandatory, optionalSchedules);
 
     if(attendees.size() <= 0) {
       // no mandatory attendees to worry about, decide based on optional attendee list
@@ -91,7 +93,7 @@ public final class FindMeetingQuery {
    * @return          A collection of suitable TimeRanges that will not create time 
    *                  conflicts for any requested attendees.
    */
-  private List<TimeRange> performQuery(
+  private List<TimeRange> findSlots(
       Collection<Event> events, 
       long duration, 
       List<TimeRange> partition) 
@@ -121,7 +123,7 @@ public final class FindMeetingQuery {
    *                  to participate. If multiple timeslots allow the same number of participants,
    *                  they will all be returned.
    */
-  private List<TimeRange> performBestFitQuery(
+  private List<TimeRange> findSlotsWithMostAttendees(
       long duration, 
       List<TimeRange> partition,
       Map<String, List<Event>> schedules) 
@@ -130,7 +132,7 @@ public final class FindMeetingQuery {
     Map<String, List<Event>> updatedSchedules = new HashMap<>();
     List<String> nameList = new ArrayList<>();
     for(String name: schedules.keySet()) {
-      if(performQuery(schedules.get(name), duration, partition).size() > 0) {
+      if(findSlots(schedules.get(name), duration, partition).size() > 0) {
         updatedSchedules.put(name, schedules.get(name));
         nameList.add(name);
       }
@@ -139,14 +141,15 @@ public final class FindMeetingQuery {
       return partition;
     }
     // perform recursive partition-building
-    List<TimeRange> result= new ArrayList<>();
+    // Set<TimeRange> result= new TreeSet<>(TimeRange.ORDER_BY_START);
+    List<TimeRange> result = new ArrayList<>();
     int max = 0;
     for(int i = 0; i < nameList.size(); i ++) {
       int[] maxDepth = new int[1];
       List<TimeRange> recursiveResult = recursiveQuery(duration, partition, 
             updatedSchedules, nameList, i, 0, maxDepth);
       if(maxDepth[0] > max) {
-        result = new ArrayList<>();
+        result.clear();
         max = maxDepth[0];
       }
       if(maxDepth[0] >= max) {
@@ -196,7 +199,7 @@ public final class FindMeetingQuery {
     }
     String currentName = nameList.get(index);
     List<TimeRange> intermediatePartition 
-        = performQuery(schedules.get(nameList.get(index)), duration, partition);
+        = findSlots(schedules.get(nameList.get(index)), duration, partition);
     // base case 2: this attendee causes a conflict, stop and back up
     if(intermediatePartition.size() == 0) {
       return partition;
@@ -211,7 +214,7 @@ public final class FindMeetingQuery {
                 nameList, i + 1, depth + 1, getMaxDepth);
       if (getMaxDepth[0] > maxDepth[0]) {
         maxDepth[0] = getMaxDepth[0];
-        result = new ArrayList<>();
+        result.clear();
       }
       if(getMaxDepth[0] >= maxDepth[0]) {
         for(TimeRange t: recursiveResult) {
