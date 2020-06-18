@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 public final class FindMeetingQuery {
@@ -37,7 +36,6 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // keep track of list of free TimeRanges available in the day
     List<TimeRange> partition = new ArrayList<>();
-
     if(request.getDuration() >= TimeRange.WHOLE_DAY.duration()) {
       return partition;
     }
@@ -66,21 +64,8 @@ public final class FindMeetingQuery {
         s.add(e);
       }
     }
-    // query for mandatory attendees first
     List<TimeRange> mandatory = findSlots(mandatoryAttendeeEvents, duration, partition);
-    if(optionalAttendees.size() <= 0) {
-      return mandatory;
-    }
-    // check if any of these slots work for any optional attendees
     Collection<TimeRange> withOptional = findSlotsWithMostAttendees(duration, mandatory, optionalSchedules);
-
-    if(attendees.size() <= 0) {
-      // no mandatory attendees to worry about, decide based on optional attendee list
-      return withOptional;
-    } else if(withOptional.size() <= 0) {
-      // no non-conflicting times for optional attendees, so mandatory takes higher priority
-      return mandatory;
-    }
     return withOptional;
   }
 
@@ -155,20 +140,21 @@ public final class FindMeetingQuery {
    * @param depth     The depth of the current recursive call, or the number of attendees
    *                  that the current partition accommodates for.
    * @param maxDepth  Container to hold the maximum depth achieved by the current partition on return,
-   *                  in order to return multiple items.    
+   *                  in order to return effectively return multiple items.    
    * @return          A collection of TimeRanges that will allow the greatest number of attendees
    *                  to participate. If multiple timeslots allow the same number of participants,
    *                  they will all be returned.
    */
-  private Collection<TimeRange> recursiveQuery(long duration, List<TimeRange> partition, 
-        Map<String, List<Event>> schedules, List<String> nameList, int index, int depth,
-        int[] maxDepth) 
+  private Collection<TimeRange> recursiveQuery(
+      long duration, 
+      List<TimeRange> partition, 
+      Map<String, List<Event>> schedules, 
+      List<String> nameList, 
+      int index, 
+      int depth,
+      int[] maxDepth) 
   {
     maxDepth[0] = depth;
-    // base case: reached end of list, no more attendees to check
-    if(index == nameList.size()) {
-      return partition;
-    }
     // recursive case. keep the TimeRanges that will yield maximum depth (more attendees)
     Collection<TimeRange> result = new TreeSet<>(TimeRange.ORDER_BY_START);
     for(int i = index; i < nameList.size(); i ++) {
@@ -192,7 +178,7 @@ public final class FindMeetingQuery {
         }
       } 
     }
-    // catch case where no non-conflicting partitions have been found
+    // base case: no non-conflicting partitions found, or reached end of attendee list
     if(result.size() == 0) {
       result = partition;
     }
