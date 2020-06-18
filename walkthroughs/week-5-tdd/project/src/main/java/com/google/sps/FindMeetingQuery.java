@@ -16,7 +16,11 @@ package com.google.sps;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 public final class FindMeetingQuery {
 
@@ -32,29 +36,36 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // keep track of list of free TimeRanges available in the day
     List<TimeRange> partition = new ArrayList<>();
-
     if(request.getDuration() >= TimeRange.WHOLE_DAY.duration()) {
       return partition;
     }
 
     partition.add(TimeRange.WHOLE_DAY);
     long duration = request.getDuration();
-
-    // query for mandatory attendees first
     Collection<String> attendees = request.getAttendees();
-    List<TimeRange> mandatory = performQuery(events, duration, attendees, partition);
-
-    // check if any of these slots work for the optional attendees
     Collection<String> optionalAttendees = request.getOptionalAttendees();
-    List<TimeRange> withOptional = performQuery(events, duration, optionalAttendees, mandatory);
 
-    if(attendees.size() <= 0) {
-      // no mandatory attendees to worry about, decide based on optional attendee list
-      return withOptional;
-    } else if(withOptional.size() <= 0) {
-      // no non-conflicting times for optional attendees, so mandatory takes higher priority
-      return mandatory;
+    Collection<Event> mandatoryAttendeeEvents = new ArrayList<>();
+    Map<String, List<Event>> optionalSchedules = new HashMap<>();
+    for(Event e: events) {
+      // build mandatory attendee schedules
+      Collection<String> eventAttendees = e.getAttendees();
+      if(attendanceOverlap(attendees, eventAttendees).size() > 0) {
+        mandatoryAttendeeEvents.add(e);
+      }
+      // build optional attendee schedules
+      List<String> optionalOverlap = attendanceOverlap(optionalAttendees, eventAttendees);
+      for(String name: optionalOverlap) {
+        List<Event> s = optionalSchedules.get(name);
+        if(s == null) {
+          s = new ArrayList<>();
+          optionalSchedules.put(name, s);
+        }
+        s.add(e);
+      }
     }
+    List<TimeRange> mandatory = findSlots(mandatoryAttendeeEvents, duration, partition);
+    Collection<TimeRange> withOptional = findSlotsWithMostAttendees(duration, mandatory, optionalSchedules);
     return withOptional;
   }
 
@@ -63,25 +74,19 @@ public final class FindMeetingQuery {
    * @param events    A Collection of existing events that must be accounted for when
    *                  searching for a suitable time slot.
    * @param duration  The duration of the requested meeting.
-   * @param attendees An attendee list to attempt to accommodate for.
+   * @param partition The existing timeslot partition to base off of.
    * @return          A collection of suitable TimeRanges that will not create time 
    *                  conflicts for any requested attendees.
    */
-  private List<TimeRange> performQuery(
+  private List<TimeRange> findSlots(
       Collection<Event> events, 
       long duration, 
-      Collection<String> attendees, 
       List<TimeRange> partition) 
   {
-    // remove only conflicting timeslots from the list of free TimeRanges
     for(Event e: events) {
-      Collection<String> eventAttendees = e.getAttendees();
-
-      if(hasAttendanceOverlap(attendees, eventAttendees)) {
-        TimeRange when = e.getWhen();        
-        // create temp partition and refresh the partition
-        partition = repartitionTimeRanges(partition, when);
-      }
+      TimeRange when = e.getWhen();        
+      // create temp partition and refresh the partition
+      partition = repartitionTimeRanges(partition, when);
     }
     // check to see which free timeslots are long enough
     List<TimeRange> freeTimes = new ArrayList<>();
@@ -93,14 +98,102 @@ public final class FindMeetingQuery {
     return freeTimes;
   }
 
-  /** Checks for overlap between two attendee lists. */
-  private boolean hasAttendanceOverlap(Collection<String> attendees1, Collection<String> attendees2) {
-    for(String req: attendees1) {
-      if(attendees2.contains(req)) {
-        return true;
+  /**
+   * Finds optimal timeslots to schedule a requested meeting based on an existing
+   * partition, returning timeslots with the highest attendee availability.
+   * @param duration  The duration of the requested meeting.
+   * @param partition The existing timeslot partition to base off of.
+   * @param schedules A map of attendees to their existing event commitments to schedule around.
+   * @return          A collection of TimeRanges that will allow the greatest number of attendees
+   *                  to participate. If multiple timeslots allow the same number of participants,
+   *                  they will all be returned.
+   */
+  private Collection<TimeRange> findSlotsWithMostAttendees(
+      long duration, 
+      List<TimeRange> partition,
+      Map<String, List<Event>> schedules) 
+  {
+    // remove optional attendees that cannot make any of the slots to reduce sample size
+    Map<String, List<Event>> updatedSchedules = new HashMap<>();
+    List<String> nameList = new ArrayList<>();
+    for(String name: schedules.keySet()) {
+      if(findSlots(schedules.get(name), duration, partition).size() > 0) {
+        updatedSchedules.put(name, schedules.get(name));
+        nameList.add(name);
       }
     }
-    return false;
+    if(nameList.size() <= 0) {
+      return partition;
+    }
+    // perform recursive partition-building
+    Collection<TimeRange> result = recursiveQuery(duration, partition, updatedSchedules, nameList, 0, 0, new int[1]);
+    return result;
+  }
+
+  /**
+   * A recursive helper method for schedule-optimizing.
+   * @param duration  The duration of the requested meeting.
+   * @param partition The existing timeslot partition to base off of.
+   * @param schedules A map of attendees to their existing event commitments to schedule around.
+   * @param nameList  An indexed list of keys for the schedules map.
+   * @param index     The position in nameList for the current recursive call.
+   * @param depth     The depth of the current recursive call, or the number of attendees
+   *                  that the current partition accommodates for.
+   * @param maxDepth  Container to hold the maximum depth achieved by the current partition on return,
+   *                  in order to return effectively return multiple items.    
+   * @return          A collection of TimeRanges that will allow the greatest number of attendees
+   *                  to participate. If multiple timeslots allow the same number of participants,
+   *                  they will all be returned.
+   */
+  private Collection<TimeRange> recursiveQuery(
+      long duration, 
+      List<TimeRange> partition, 
+      Map<String, List<Event>> schedules, 
+      List<String> nameList, 
+      int index, 
+      int depth,
+      int[] maxDepth) 
+  {
+    maxDepth[0] = depth;
+    // recursive case. keep the TimeRanges that will yield maximum depth (more attendees)
+    Collection<TimeRange> result = new TreeSet<>(TimeRange.ORDER_BY_START);
+    for(int i = index; i < nameList.size(); i ++) {
+      String currentName = nameList.get(i);
+      List<TimeRange> intermediatePartition 
+            = findSlots(schedules.get(currentName), duration, partition);
+      // keep going only if no conflicts for now
+      if(intermediatePartition.size() > 0) {
+        int[] getMaxDepth = new int[1];
+        Collection<TimeRange> recursiveResult 
+            = recursiveQuery(duration, intermediatePartition, schedules, 
+                nameList, i + 1, depth + 1, getMaxDepth);
+        if(getMaxDepth[0] > maxDepth[0]) {
+          maxDepth[0] = getMaxDepth[0];
+          result.clear();
+        }
+        if(getMaxDepth[0] >= maxDepth[0]) {
+          for(TimeRange t: recursiveResult) {
+            result.add(t);
+          }
+        }
+      } 
+    }
+    // base case: no non-conflicting partitions found, or reached end of attendee list
+    if(result.size() == 0) {
+      result = partition;
+    }
+    return result;
+  }
+
+  /** Checks for overlap between two attendee lists. */
+  private List<String> attendanceOverlap(Collection<String> attendees1, Collection<String> attendees2) {
+    List<String> result = new ArrayList<>();
+    for(String req: attendees1) {
+      if(attendees2.contains(req)) {
+        result.add(req);
+      }
+    }
+    return result;
   }
 
   /**
