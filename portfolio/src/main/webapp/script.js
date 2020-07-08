@@ -513,7 +513,6 @@ async function updateNickname() {
   getAndRefreshComments();
 }
 
-<<<<<<< HEAD
 /**
  * Translates content from the webpage and resizes dropdown container, if appplicable.
  *
