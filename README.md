@@ -7,11 +7,6 @@ This repo contains Helen  Fang's portfolio and STEP starter projects.
 
 ### Portfolio Preview
 
-![Portfolio Page](/readme/portfolio.png)
-<br />
-<br />
-<br />
-
 ![Commments Section of Portfolio](/readme/portfolio-comments.png)
 <br />
 <br />
